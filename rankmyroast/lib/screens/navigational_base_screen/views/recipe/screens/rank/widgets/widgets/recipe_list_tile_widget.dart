@@ -55,7 +55,11 @@ class RecipeListTileWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // Large Custom Leading Image
-                  SizedBox(
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey[600]!, width: 1.5),
+                    ),
                     width: 90,
                     height: 90,
                     child: ClipRRect(
