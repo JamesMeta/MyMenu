@@ -4,9 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rankmyroast/classes/extra/create_recipe_extra.dart';
 import 'package:rankmyroast/classes/extra/rank_recipe_extra.dart';
+import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
 import 'package:rankmyroast/classes/modals/recipe_rating.dart';
+import 'package:rankmyroast/common_widgets/confirmation_dialog_widget.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/viewer/widgets/rating_dialog_widget.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/viewer/widgets/recipe_list_widget.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
@@ -23,8 +25,9 @@ class RecipeViewer extends StatefulWidget {
   State<RecipeViewer> createState() => _RecipeViewerState();
 }
 
-class _RecipeViewerState extends State<RecipeViewer> {
+class _RecipeViewerState extends State<RecipeViewer> with SnackbarService {
   late final bool _isOwner;
+  late final bool _isGroupAdmin;
   late final bool _hasUserRated;
   late final RecipeRating? _userRating;
   late final Recipe _recipe;
@@ -45,6 +48,7 @@ class _RecipeViewerState extends State<RecipeViewer> {
     _userGroups = widget.userGroups;
 
     _isOwner = _recipe.userId == Supabase.instance.client.auth.currentUser!.id;
+
     _ratings = _fetchRatings();
   }
 
@@ -84,6 +88,54 @@ class _RecipeViewerState extends State<RecipeViewer> {
               );
             },
             icon: Icon(Icons.copy),
+          ),
+          FutureBuilder(
+            future: SupabaseHelper.groups.isUserGroupAdmin(_group!.id),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data == true) {
+                  return IconButton(
+                    onPressed: () async {
+                      final confirmDelete = await showDialog<bool>(
+                        context: context,
+                        builder:
+                            (context) => ConfirmationDialogWidget(
+                              title: "Remove Recipe From Group?",
+                              content:
+                                  "Removing this recipe permanently revokes group access and deletes its group rankings and ratings. The recipe itself will not be deleted and remains accessible to the owner and other groups.",
+                              confirmButtonText: "Remove",
+                              cancelButtonText: "Cancel",
+                              isDestructiveAction: true,
+                            ),
+                      );
+
+                      if (confirmDelete == true) {
+                        final deleteResponse = await SupabaseHelper.recipe
+                            .removeRecipeFromGroup(_recipe.id, _group.id);
+                        if (deleteResponse == true) {
+                          if (context.mounted) {
+                            showSnackbar(context, "Recipe removed from group");
+                            context.pop();
+                          }
+                        } else {
+                          if (context.mounted) {
+                            showErrorSnackbar(
+                              context,
+                              "Error removing recipe from group",
+                            );
+                          }
+                        }
+                      }
+                    },
+                    icon: Icon(Icons.delete),
+                  );
+                } else {
+                  return SizedBox();
+                }
+              } else {
+                return SizedBox();
+              }
+            },
           ),
         ],
       ),

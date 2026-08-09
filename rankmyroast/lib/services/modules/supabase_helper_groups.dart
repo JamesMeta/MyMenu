@@ -367,4 +367,31 @@ class SupabaseHelperGroups {
     }
     return null;
   }
+
+  Future<bool> isUserGroupAdmin(String groupId) async {
+    final authId = _client.auth.currentUser?.id;
+
+    if (authId != null) {
+      try {
+        final response =
+            await _client
+                .from("user_group")
+                .select("permission_level")
+                .eq("group_id", groupId)
+                .eq("user_id", authId)
+                .maybeSingle();
+
+        if (response == null) {
+          return false;
+        }
+
+        final permissionLevel = response["permission_level"] as int?;
+        return permissionLevel != null && permissionLevel >= 2;
+      } on Exception catch (e) {
+        print(e);
+        return false;
+      }
+    }
+    return false;
+  }
 }
