@@ -500,4 +500,18 @@ class SupabaseHelperRecipe {
       return false;
     }
   }
+
+  Future<bool?> removeRecipeFromGroup(String recipeId, String groupId) async {
+    try {
+      await _client
+          .from("recipe_group")
+          .delete()
+          .eq("recipe_id", recipeId)
+          .eq("group_id", groupId);
+      return true;
+    } catch (e) {
+      print('Error removing recipe from group: $e');
+      return false;
+    }
+  }
 }

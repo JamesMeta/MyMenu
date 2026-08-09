@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
+import 'package:rankmyroast/common_widgets/confirmation_dialog_widget.dart';
 import 'package:rankmyroast/common_widgets/take_photo_bottom_modal_widget.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/create/widgets/confirm_delete_recipe_dialog.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/create/widgets/time_section_widget.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/create/widgets/form_section_widget.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/create/widgets/group_form_section_widget.dart';
@@ -179,7 +179,15 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen>
               onPressed: () async {
                 final confirm = await showDialog<bool>(
                   context: context,
-                  builder: (context) => ConfirmDeleteRecipeDialog(),
+                  builder:
+                      (context) => ConfirmationDialogWidget(
+                        title: "Delete Recipe",
+                        content:
+                            "Are you sure you want to delete this recipe? This will remove it from all groups and make it inaccessible to other users. This action cannot be undone.",
+                        confirmButtonText: "Delete",
+                        cancelButtonText: "Cancel",
+                        isDestructiveAction: true,
+                      ),
                 );
 
                 if (confirm != true) return;

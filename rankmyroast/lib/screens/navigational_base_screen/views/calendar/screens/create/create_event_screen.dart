@@ -8,6 +8,7 @@ import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
 import 'package:rankmyroast/classes/modals/schedule.dart';
+import 'package:rankmyroast/common_widgets/confirmation_dialog_widget.dart';
 
 import 'package:rankmyroast/services/supabase_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -85,21 +86,13 @@ class _CreateEventScreenState extends State<CreateEventScreen>
                 final confirmDelete = await showDialog<bool>(
                   context: context,
                   builder:
-                      (context) => AlertDialog(
-                        title: const Text('Confirm Delete'),
-                        content: const Text(
-                          'Are you sure you want to delete this event?',
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => context.pop(false),
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () => context.pop(true),
-                            child: const Text('Delete'),
-                          ),
-                        ],
+                      (context) => ConfirmationDialogWidget(
+                        title: "Delete Event?",
+                        content:
+                            "Deleting this event will remove it from the calendar; this action cannot be undone.",
+                        confirmButtonText: "Delete",
+                        cancelButtonText: "Cancel",
+                        isDestructiveAction: true,
                       ),
                 );
 

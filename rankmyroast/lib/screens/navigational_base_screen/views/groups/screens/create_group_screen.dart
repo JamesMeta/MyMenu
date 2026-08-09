@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/group_member.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/groups/screens/widgets/delete_group_confirmation_dialog.dart';
+import 'package:rankmyroast/common_widgets/confirmation_dialog_widget.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/groups/screens/widgets/group_member_list_tile.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/groups/screens/widgets/group_security_informational_dialog.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
@@ -628,7 +628,15 @@ class _CreateGroupScreenState extends State<CreateGroupScreen>
   Future<bool?> _deleteGroup() async {
     final deleteConfirmation = await showDialog<bool>(
       context: context,
-      builder: (context) => DeleteGroupConfirmationDialog(),
+      builder:
+          (context) => ConfirmationDialogWidget(
+            title: "Delete Group?",
+            content:
+                "Deleting this group will not delete recipes within the group but they will be unaccessible to users without access to them. This will delete all recipe rankings within this group",
+            confirmButtonText: "Delete",
+            cancelButtonText: "Cancel",
+            isDestructiveAction: true,
+          ),
     );
 
     if (deleteConfirmation != true) {
