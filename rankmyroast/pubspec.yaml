@@ -25,6 +25,8 @@ dependencies:
   sqflite: any
   syncfusion_flutter_calendar: ^31.1.19
   timezone: ^0.10.1
+  device_info_plus: ^12.4.0
+  package_info_plus: ^9.0.1
 
 
 dev_dependencies:

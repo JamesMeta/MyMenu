@@ -20,7 +20,7 @@ mixin SnackbarService {
   void showSuccessSnackbar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(message, style: TextStyle(color: Colors.white)),
         backgroundColor: const Color.fromARGB(255, 106, 201, 109),
         duration: const Duration(seconds: 2),
       ),
@@ -40,7 +40,7 @@ mixin SnackbarService {
   static void showSuccessSnackbarStatic(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: const TextStyle(color: Colors.black)),
+        content: Text(message, style: TextStyle(color: Colors.white)),
         backgroundColor: const Color.fromARGB(255, 106, 201, 109),
         duration: const Duration(seconds: 2),
       ),

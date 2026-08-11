@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:rankmyroast/services/supabase_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseHelperStorage {
-  static final _client = Supabase.instance.client;
   static final ImagePicker _picker = ImagePicker();
 
   Future<File?> pickImageFromCamera() async {
@@ -120,13 +120,28 @@ class SupabaseHelperStorage {
             file,
             fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
           );
-      print('Upload successful to $bucketName/$path');
+      await SupabaseHelper.logging.logEvent(
+        type: 'info',
+        location: 'supabase_helper_storage.dart:122',
+        content:
+            'Attempted to upload a file to storage bucket $bucketName using path $path and it succeeded.',
+      );
       return path;
     } on StorageException catch (error) {
-      print('Storage Error: ${error.message}');
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_storage.dart:126',
+        content:
+            'Attempted to upload a file to storage bucket $bucketName using path $path. StorageException: ${error.message}',
+      );
       return null;
     } catch (error) {
-      print('Unexpected Error: $error');
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_storage.dart:129',
+        content:
+            'Attempted to upload a file to storage bucket $bucketName using path $path. Unexpected error: ${error.toString()}',
+      );
       return null;
     }
   }
@@ -150,13 +165,28 @@ class SupabaseHelperStorage {
             file,
             fileOptions: const FileOptions(cacheControl: '3600', upsert: true),
           );
-      print('Upload successful to $bucketName/$path');
+      await SupabaseHelper.logging.logEvent(
+        type: 'info',
+        location: 'supabase_helper_storage.dart:152',
+        content:
+            'Attempted to upload a file to storage bucket $bucketName using path $path and it succeeded.',
+      );
       return path;
     } on StorageException catch (error) {
-      print('Storage Error: ${error.message}');
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_storage.dart:156',
+        content:
+            'Attempted to upload a file to storage bucket $bucketName using path $path. StorageException: ${error.message}',
+      );
       return null;
     } catch (error) {
-      print('Unexpected Error: $error');
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_storage.dart:159',
+        content:
+            'Attempted to upload a file to storage bucket $bucketName using path $path. Unexpected error: ${error.toString()}',
+      );
       return null;
     }
   }
