@@ -1,0 +1,80 @@
+Privacy Policy
+Effective Date: August 13, 2026
+
+Application: MyMenu
+
+Service Provider / Data Controller: James Mata ("Service Provider", "we", "us", or "our")
+
+Contact Email: jamesmata556@gmail.com
+
+This Privacy Policy explains how personal information is collected, used, stored, and disclosed when you download, install, or use the MyMenu mobile application and related services (collectively, the "Application").
+
+1. Information We Collect
+We collect information directly from you when you provide it, as well as automatically when you use the Application.
+
+A. Information You Provide directly
+Account Information: When you register an account, we collect your email address and authentication details (e.g., password credentials).
+
+User-Generated Content: Any profile information, meal descriptions, ranks, or reviews you create, submit, or upload within the Application.
+
+B. Information Collected Automatically
+When you connect to or interact with the Application, our infrastructure automatically collects standard technical logs:
+
+IP Address: Collected automatically during network requests to our servers and API endpoints for routing, security, and rate-limiting purposes.
+
+Database & User Identifiers: Unique identifiers assigned to your account, such as your internal database UUID (User ID), session keys, and database record IDs.
+
+Cookies, Local Storage & Auth Tokens: The Application utilizes persistent session tokens (such as JSON Web Tokens or JWTs), refresh tokens, and local device storage keys to keep you securely signed in and to remember your preferences across sessions.
+
+Device & Usage Telemetry: Basic device diagnostics, operating system version, and HTTP User-Agent headers sent during API requests.
+
+2. Backend Infrastructure & Third-Party Service Providers (Supabase)
+To operate the Application, we rely on third-party cloud infrastructure and service providers who process data on our behalf under strict data protection standards.
+
+Use of Supabase
+We use Supabase, Inc. for backend cloud hosting, user authentication, database management, and file storage.
+
+Data Handled by Supabase: Your registered email address, hashed credentials, internal database IDs (UUIDs), user-generated content, IP addresses associated with API calls, and temporary session tokens (JWTs) are stored and processed on Supabase's hosted infrastructure.
+
+Security & Location: Data managed by Supabase is encrypted in transit (TLS/HTTPS) and at rest (AES-256). Data is hosted in secure data center environments.
+
+Third-Party Policy: For more information on how Supabase manages data and infrastructure security, please visit Supabase's Privacy Policy.
+
+3. How We Use Your Information
+We process your personal information for the following specific purposes:
+
+To Provide & Maintain the Service: Authenticating your identity, maintaining your session state, and displaying your saved data.
+
+To Moderation & Security: Monitoring network traffic, preventing fraud, enforcement against illegal or abusive user-generated content, and verifying system integrity.
+
+To Communicate with You: Sending necessary authentication emails (e.g., password resets or email verifications) and responding to support or legal inquiries.
+
+We do not sell, rent, or trade your personal data or IP addresses to third parties or advertising networks.
+
+4. Open Source Licensing & Public Repository Note
+The Application source code is made available under the GNU General Public License v3.0 (GPL-3.0).
+
+While the underlying application codebase is open source under the GPL-3.0, this Privacy Policy applies strictly to the operational data collected through the official hosted services and backend database operated by the Service Provider.
+
+If you run or deploy a self-hosted instance of the application using your own backend infrastructure, you (or the instance operator) are responsible for the data collection and privacy practices of that independent deployment.
+
+5. User-Generated Content & Moderation Reports
+If you choose to submit content within the Application that is visible to other users, that content along with associated public profile data (e.g., display name or public user ID) may be visible within the app.
+
+If you report content or another user, or if content you posted is reported under our content safety procedures, we collect and process the report details, the associated user IDs, and the flagged content solely to evaluate compliance with applicable laws and community standards.
+
+6. Data Retention & Deletion Rights
+Data Retention: We retain your personal data (including email, user ID, and content) for as long as your account remains active or as needed to provide you with the Application's services.
+
+Account Deletion / Your Rights: You have the right to access, correct, or request the full deletion of your personal data at any time. You can request account deletion directly within the Application settings or by contacting us at jamesmata556@gmail.com. Upon receiving a valid request, we will remove your personal data and account records from our active databases and Supabase storage.
+
+7. Children's Privacy
+The Application is not intended for use by children under the age of 16 (or the applicable digital age of consent in your jurisdiction). We do not knowingly collect personal data from children under this age. If we learn that we have collected personal data from a child under 16 without parental consent, we will take immediate steps to delete that data from our servers.
+
+8. Changes to This Privacy Policy
+We may update our Privacy Policy from time to time. You are advised to review this page periodically for any changes. We will notify you of any changes by posting the updated Privacy Policy on this page and updating the "Effective Date" at the top of this document.
+
+9. Contact Us
+If you have any questions, concerns, or requests regarding this Privacy Policy or your personal data, please contact the Service Provider at:
+
+Email: jamesmata556@gmail.com

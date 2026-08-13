@@ -18,7 +18,7 @@ class SupabaseHelperLogging {
         'type': type,
         'location': location,
         'content': content,
-        'device_info': await getDeviceInfo(),
+        'device_information': await getDeviceInfo(),
         'user_id': _client.auth.currentUser?.id,
       });
 
@@ -27,7 +27,7 @@ class SupabaseHelperLogging {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Failed to log event: $type, $location, $content');
+        print('Failed to log event: $type, $location, $content $e');
       }
     }
   }
