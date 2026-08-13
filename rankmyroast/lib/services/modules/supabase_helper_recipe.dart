@@ -230,7 +230,12 @@ class SupabaseHelperRecipe {
         return groups;
       }
     } catch (e) {
-      print('Error fetching groups for recipe: $e');
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_recipe.dart:233',
+        content:
+            'Attempted to fetch all groups linked to recipe_id=$recipeId by joining recipe_group and group records. Error: ${e.toString()}',
+      );
     }
     return null;
   }
@@ -255,7 +260,12 @@ class SupabaseHelperRecipe {
         return recipes;
       }
     } catch (e) {
-      print('Error fetching recipes by group id: $e');
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_recipe.dart:258',
+        content:
+            'Attempted to fetch recipes for group_id=$groupId through the recipe_group join. Error: ${e.toString()}',
+      );
     }
     return null;
   }
@@ -281,7 +291,12 @@ class SupabaseHelperRecipe {
         return ratings;
       }
     } catch (e) {
-      print('Error fetching ratings for recipe by group id: $e');
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_recipe.dart:284',
+        content:
+            'Attempted to fetch recipe ratings for recipe_id=$recipeId and group_id=$groupId. Error: ${e.toString()}',
+      );
     }
     return null;
   }
@@ -303,7 +318,12 @@ class SupabaseHelperRecipe {
         return ratings;
       }
     } catch (e) {
-      print('Error fetching ratings for recipe by group id: $e');
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_recipe.dart:306',
+        content:
+            'Attempted to fetch all recipe ratings for group_id=$groupId. Error: ${e.toString()}',
+      );
     }
     return null;
   }
@@ -350,7 +370,12 @@ class SupabaseHelperRecipe {
 
       return true;
     } catch (e) {
-      print('Error updating Recipe Ratings $e');
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_recipe.dart:353',
+        content:
+            'Attempted to update a batch of recipe rankings for ${newRankings.length} item(s). Error: ${e.toString()}',
+      );
     }
     return null;
   }
@@ -456,7 +481,12 @@ class SupabaseHelperRecipe {
         }
       }
     } on Exception catch (e) {
-      print('Error upserting recipe rating: $e');
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_recipe.dart:459',
+        content:
+            'Attempted to upsert a recipe rating for recipe_id=${recipe.id}, group_id=${group?.id ?? 'null'}, user_id=${Supabase.instance.client.auth.currentUser?.id}. Error: ${e.toString()}',
+      );
       return null;
     }
   }
@@ -471,7 +501,12 @@ class SupabaseHelperRecipe {
 
       return response.map((r) => RecipeRating.fromMap(r)).toList();
     } catch (e) {
-      print('Error fetching recipe ratings: $e');
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_recipe.dart:474',
+        content:
+            'Attempted to fetch all recipe ratings for the current user from the recipe_rating table. Error: ${e.toString()}',
+      );
       return null;
     }
   }
@@ -486,7 +521,12 @@ class SupabaseHelperRecipe {
 
       return response.map((r) => Recipe.fromMap(r)).toList();
     } catch (e) {
-      print('Error fetching accessible recipes for user: $e');
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_recipe.dart:489',
+        content:
+            'Attempted to fetch all recipes the current user can access from the recipe table. Error: ${e.toString()}',
+      );
       return null;
     }
   }
@@ -496,7 +536,12 @@ class SupabaseHelperRecipe {
       await _client.from("recipe").delete().eq("id", recipeId);
       return true;
     } catch (e) {
-      print('Error deleting recipe: $e');
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_recipe.dart:499',
+        content:
+            'Attempted to delete recipe_id=$recipeId from the recipe table. Error: ${e.toString()}',
+      );
       return false;
     }
   }
@@ -510,7 +555,12 @@ class SupabaseHelperRecipe {
           .eq("group_id", groupId);
       return true;
     } catch (e) {
-      print('Error removing recipe from group: $e');
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_recipe.dart:513',
+        content:
+            'Attempted to remove recipe_id=$recipeId from group_id=$groupId in the recipe_group join table. Error: ${e.toString()}',
+      );
       return false;
     }
   }

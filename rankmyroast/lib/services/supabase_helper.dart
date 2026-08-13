@@ -1,5 +1,6 @@
 import 'package:rankmyroast/services/modules/supabase_helper_auth.dart';
 import 'package:rankmyroast/services/modules/supabase_helper_groups.dart';
+import 'package:rankmyroast/services/modules/supabase_helper_logging.dart';
 import 'package:rankmyroast/services/modules/supabase_helper_recipe.dart';
 import 'package:rankmyroast/services/modules/supabase_helper_schedule.dart';
 import 'package:rankmyroast/services/modules/supabase_helper_storage.dart';
@@ -12,4 +13,5 @@ class SupabaseHelper {
   static final storage = SupabaseHelperStorage();
   static final recipe = SupabaseHelperRecipe();
   static final schedule = SupabaseHelperSchedule();
+  static final logging = SupabaseHelperLogging();
 }

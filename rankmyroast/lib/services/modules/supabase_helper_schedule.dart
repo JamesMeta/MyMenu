@@ -15,7 +15,12 @@ class SupabaseHelperSchedule {
 
       return response.map((toElement) => Schedule.fromMap(toElement)).toList();
     } on Exception catch (e) {
-      print("Error unable to get events for user: $e");
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_schedule.dart:18',
+        content:
+            'Attempted to load scheduled events for the current user from the schedule table. Error: ${e.toString()}',
+      );
       return null;
     }
   }
@@ -43,27 +48,39 @@ class SupabaseHelperSchedule {
               .single();
 
       if (response["id"] == null) {
-        print("Error creating scheduled event");
+        await SupabaseHelper.logging.logEvent(
+          type: 'error',
+          location: 'supabase_helper_schedule.dart:41',
+          content:
+              'Attempted to create a scheduled event for group_id=$groupId, recipe_id=$recipeId, served_at=${servedAt.toIso8601String()}. The insert returned no id, so the database rejected the create request.',
+        );
         return false;
       }
 
       return true;
     } on Exception catch (e) {
-      print("Error unable to create scheduled event: $e");
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_schedule.dart:50',
+        content:
+            'Attempted to create a scheduled event for group_id=$groupId, recipe_id=$recipeId, served_at=${servedAt.toIso8601String()}. Error: ${e.toString()}',
+      );
       return null;
     }
   }
 
   Future<bool?> deleteScheduledEvent(int scheduleId) async {
     try {
-      final response = await _client
-          .from("schedule")
-          .delete()
-          .eq("id", scheduleId);
+      await _client.from("schedule").delete().eq("id", scheduleId);
 
       return true;
     } on Exception catch (e) {
-      print("Error unable to delete scheduled event: $e");
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_schedule.dart:64',
+        content:
+            'Attempted to delete scheduled event id=$scheduleId from the schedule table. Error: ${e.toString()}',
+      );
       return null;
     }
   }
@@ -89,16 +106,24 @@ class SupabaseHelperSchedule {
               .select(); // <--- Forces Supabase to return the modified row(s)
 
       // If the list is empty, no row matched the ID or RLS denied it
-      if (response == null || (response as List).isEmpty) {
-        print(
-          "Update executed but 0 rows were altered. Check your ID or RLS policies.",
+      if ((response as List).isEmpty) {
+        await SupabaseHelper.logging.logEvent(
+          type: 'error',
+          location: 'supabase_helper_schedule.dart:86',
+          content:
+              'Attempted to update scheduled event id=$scheduleId with served_at=${newServedAt.toIso8601String()}, recipe_id=$newRecipeId, group_id=$newGroupId. The update affected 0 rows, so the ID may be invalid or the RLS policy blocked the change.',
         );
         return false;
       }
 
       return true;
     } catch (e) {
-      print("Error unable to update scheduled event: $e");
+      await SupabaseHelper.logging.logEvent(
+        type: 'error',
+        location: 'supabase_helper_schedule.dart:100',
+        content:
+            'Attempted to update scheduled event id=$scheduleId with served_at=${newServedAt.toIso8601String()}, recipe_id=$newRecipeId, group_id=$newGroupId, notes=$newNotes. Error: ${e.toString()}',
+      );
       return null;
     }
   }

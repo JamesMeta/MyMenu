@@ -2,6 +2,7 @@ import 'package:rankmyroast/classes/modals/recipe.dart';
 import 'package:rankmyroast/classes/responses/create_group_response.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/group_member.dart';
+import 'package:rankmyroast/services/supabase_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseHelperGroups {
@@ -56,7 +57,12 @@ class SupabaseHelperGroups {
 
         return true;
       } on Exception catch (e) {
-        print(e);
+        await SupabaseHelper.logging.logEvent(
+          type: 'error',
+          location: 'supabase_helper_groups.dart:59',
+          content:
+              'Attempted to create the personal group for the current authenticated user. Error: ${e.toString()}',
+        );
         return false;
       }
     }
@@ -90,7 +96,12 @@ class SupabaseHelperGroups {
 
         return groups;
       } on Exception catch (e) {
-        print(e);
+        await SupabaseHelper.logging.logEvent(
+          type: 'error',
+          location: 'supabase_helper_groups.dart:93',
+          content:
+              'Attempted to fetch the groups and personal recipes for the current user from the group and recipe tables. Error: ${e.toString()}',
+        );
         return null;
       }
     }
@@ -164,7 +175,12 @@ class SupabaseHelperGroups {
           failedToAddMembers: failedAdditions,
         );
       } on Exception catch (e) {
-        print(e);
+        await SupabaseHelper.logging.logEvent(
+          type: 'error',
+          location: 'supabase_helper_groups.dart:167',
+          content:
+              'Attempted to create a new group named "${group.name}" and attach members. Error: ${e.toString()}',
+        );
         return CreateGroupResponse(
           success: false,
           localError: true,
@@ -330,7 +346,12 @@ class SupabaseHelperGroups {
         }
         return false;
       } on Exception catch (e) {
-        print(e);
+        await SupabaseHelper.logging.logEvent(
+          type: 'error',
+          location: 'supabase_helper_groups.dart:349',
+          content:
+              'Attempted to delete group id=$groupId while verifying it was not a personal group. Error: ${e.toString()}',
+        );
         return false;
       }
     }
@@ -361,7 +382,12 @@ class SupabaseHelperGroups {
         }
         return false;
       } on Exception catch (e) {
-        print(e);
+        await SupabaseHelper.logging.logEvent(
+          type: 'error',
+          location: 'supabase_helper_groups.dart:364',
+          content:
+              'Attempted to leave group id=$groupId for the current user by deleting the user_group record. Error: ${e.toString()}',
+        );
         return false;
       }
     }
@@ -388,7 +414,12 @@ class SupabaseHelperGroups {
         final permissionLevel = response["permission_level"] as int?;
         return permissionLevel != null && permissionLevel >= 2;
       } on Exception catch (e) {
-        print(e);
+        await SupabaseHelper.logging.logEvent(
+          type: 'error',
+          location: 'supabase_helper_groups.dart:391',
+          content:
+              'Attempted to check whether the current user is an admin for group id=$groupId by reading permission_level. Error: ${e.toString()}',
+        );
         return false;
       }
     }

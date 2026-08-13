@@ -1,3 +1,4 @@
+import 'package:rankmyroast/services/supabase_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseHelperUsers {
@@ -30,7 +31,12 @@ class SupabaseHelperUsers {
       try {
         await _client.from("user").insert({"auth_id": authId});
       } on Exception catch (e) {
-        print(e);
+        await SupabaseHelper.logging.logEvent(
+          type: 'error',
+          location: 'supabase_helper_users.dart:33',
+          content:
+              'Attempted to add a user row for auth_id=$authId to the user table. Error: ${e.toString()}',
+        );
       }
     }
   }
@@ -52,7 +58,12 @@ class SupabaseHelperUsers {
           return true;
         }
       } on Exception catch (e) {
-        print(e);
+        await SupabaseHelper.logging.logEvent(
+          type: 'error',
+          location: 'supabase_helper_users.dart:61',
+          content:
+              'Attempted to check whether the current user has a username populated in the user table. Error: ${e.toString()}',
+        );
         return false;
       }
     }
@@ -75,7 +86,12 @@ class SupabaseHelperUsers {
         }
         return true;
       } on Exception catch (e) {
-        print(e);
+        await SupabaseHelper.logging.logEvent(
+          type: 'error',
+          location: 'supabase_helper_users.dart:78',
+          content:
+              'Attempted to validate whether the username "$username" is already in use. Error: ${e.toString()}',
+        );
         return false;
       }
     }
@@ -99,7 +115,12 @@ class SupabaseHelperUsers {
         }
         return false;
       } on Exception catch (e) {
-        print(e);
+        await SupabaseHelper.logging.logEvent(
+          type: 'error',
+          location: 'supabase_helper_users.dart:102',
+          content:
+              'Attempted to set the current user\'s username to "$username" in the user table. Error: ${e.toString()}',
+        );
         return false;
       }
     }
@@ -119,7 +140,12 @@ class SupabaseHelperUsers {
 
         return response?["username"];
       } on Exception catch (e) {
-        print(e);
+        await SupabaseHelper.logging.logEvent(
+          type: 'error',
+          location: 'supabase_helper_users.dart:122',
+          content:
+              'Attempted to read the current user\'s username from the user table. Error: ${e.toString()}',
+        );
         return null;
       }
     }

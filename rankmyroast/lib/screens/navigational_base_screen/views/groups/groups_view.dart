@@ -76,7 +76,11 @@ class _GroupsViewState extends State<GroupsView> {
               }
 
               if (snapshot.hasError) {
-                print("Error fetching groups: ${snapshot.error}");
+                SupabaseHelper.logging.logEvent(
+                  type: "error",
+                  location: "groups_view.dart:78",
+                  content: "Error fetching groups: ${snapshot.error}",
+                );
 
                 return Text(
                   "Error fetching groups: ${snapshot.error}",
@@ -153,7 +157,11 @@ class _GroupsViewState extends State<GroupsView> {
               }
 
               if (snapshot.hasError) {
-                print("Error fetching groups: ${snapshot.error}");
+                SupabaseHelper.logging.logEvent(
+                  type: "error",
+                  location: "groups_view.dart:159",
+                  content: "Error fetching groups: ${snapshot.error}",
+                );
                 return Text(
                   "Error fetching groups: ${snapshot.error}",
                   style: TextStyle(color: Colors.red),
