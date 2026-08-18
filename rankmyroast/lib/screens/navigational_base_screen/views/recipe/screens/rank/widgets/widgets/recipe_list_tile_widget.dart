@@ -12,7 +12,7 @@ class RecipeListTileWidget extends StatelessWidget {
   final bool isEdit;
   final bool isGroupRatingTile;
 
-  final void Function(Recipe recipe) removeValueFromList;
+  final void Function(Recipe recipe)? removeValueFromList;
 
   const RecipeListTileWidget({
     super.key,
@@ -21,7 +21,7 @@ class RecipeListTileWidget extends StatelessWidget {
     required this.groupRanking,
     this.isEdit = false,
     this.isGroupRatingTile = false,
-    required this.removeValueFromList,
+    this.removeValueFromList,
   });
 
   @override
@@ -211,7 +211,7 @@ class RecipeListTileWidget extends StatelessWidget {
             top: 8.h,
             child: IconButton(
               onPressed: () {
-                removeValueFromList(recipe);
+                removeValueFromList!(recipe);
               },
               icon: Icon(
                 Icons.close_rounded,
