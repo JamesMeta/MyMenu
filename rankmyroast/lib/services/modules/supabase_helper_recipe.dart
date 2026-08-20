@@ -444,8 +444,9 @@ class SupabaseHelperRecipe {
                 .eq("recipe_id", recipe.id)
                 .eq("user_id", userId)
                 .eq("group_id", group.id)
-                .single();
-        if (existingRatingResponse.isEmpty) {
+                .limit(1)
+                .maybeSingle();
+        if (existingRatingResponse == null || existingRatingResponse.isEmpty) {
           // No existing rating, create a new one
           final response =
               await _client
