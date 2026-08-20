@@ -11,6 +11,7 @@ class RecipeListTileWidget extends StatelessWidget {
   final String groupRanking;
   final bool isEdit;
   final bool isGroupRatingTile;
+  final bool isUsingRatings;
 
   final void Function(Recipe recipe)? removeValueFromList;
 
@@ -22,6 +23,7 @@ class RecipeListTileWidget extends StatelessWidget {
     this.isEdit = false,
     this.isGroupRatingTile = false,
     this.removeValueFromList,
+    this.isUsingRatings = false,
   });
 
   @override
@@ -31,7 +33,11 @@ class RecipeListTileWidget extends StatelessWidget {
     final userRankingInt = int.tryParse(userRanking) ?? 0;
     final groupRankingInt = int.tryParse(groupRanking) ?? 0;
 
-    final difference = userRankingInt - groupRankingInt;
+    var difference = userRankingInt - groupRankingInt;
+
+    if (isUsingRatings) {
+      difference = difference * -1;
+    }
 
     return Stack(
       children: [
@@ -117,7 +123,8 @@ class RecipeListTileWidget extends StatelessWidget {
                             child: Column(
                               children: [
                                 Text(
-                                  "Ranking",
+                                  isUsingRatings ? "Rating" : "Ranking",
+
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 14.sp,

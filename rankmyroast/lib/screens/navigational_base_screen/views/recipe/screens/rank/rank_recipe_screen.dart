@@ -252,6 +252,7 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
                           groupRanking: groupRankedPlace,
                           userRanking: userRankedPlace,
                           isGroupRatingTile: true,
+
                           removeValueFromList: removeValueFromList,
                         );
                       },
@@ -316,6 +317,22 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
           final List<RecipeGroupUserRating> recipeGroupUserRatingList =
               snapshot.data!;
 
+          if (!_reordering) {
+            if (_viewGroupRankings) {
+              recipeGroupUserRatingList.sort((a, b) {
+                final rankingA = a.groupRating;
+                final rankingB = b.groupRating;
+                return rankingB.compareTo(rankingA);
+              });
+            } else {
+              recipeGroupUserRatingList.sort((a, b) {
+                final rankingA = a.userRating;
+                final rankingB = b.userRating;
+                return rankingB.compareTo(rankingA);
+              });
+            }
+          }
+
           return Expanded(
             child: Column(
               children: [
@@ -326,16 +343,14 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         final userRankedPlace =
-                            recipeGroupUserRatingList[index].userRating !=
-                                    double.infinity
+                            recipeGroupUserRatingList[index].userRating != 0
                                 ? recipeGroupUserRatingList[index].userRating
                                     .toInt()
                                     .toString()
                                 : "N/A";
 
                         final groupRankedPlace =
-                            recipeGroupUserRatingList[index].groupRating !=
-                                    double.infinity
+                            recipeGroupUserRatingList[index].groupRating != 0
                                 ? recipeGroupUserRatingList[index].groupRating
                                     .toInt()
                                     .toString()
@@ -347,6 +362,7 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
                           recipe: recipe,
                           userRanking: userRankedPlace,
                           groupRanking: groupRankedPlace,
+                          isUsingRatings: true,
                         );
                       },
                     ),
@@ -380,6 +396,7 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
                           groupRanking: groupRankedPlace,
                           userRanking: userRankedPlace,
                           isGroupRatingTile: true,
+                          isUsingRatings: true,
                         );
                       },
                     ),
@@ -460,7 +477,7 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
     return sortedIds;
   }
 
-  List<String> _sortRecipesByRatings(List<RecipeRating> ratings) {
+  List<(String, double)> _sortRecipesByRatings(List<RecipeRating> ratings) {
     final averages = <String, double>{};
     final counts = <String, int>{};
 
@@ -471,13 +488,15 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
     }
 
     final sortedIds =
-        averages.keys.toList()..sort((a, b) {
-          final avgA = averages[a]! / counts[a]!;
-          final avgB = averages[b]! / counts[b]!;
-          return avgA.compareTo(avgB);
+        averages.entries.toList()..sort((a, b) {
+          final avgA = a.value / counts[a.key]!;
+          final avgB = b.value / counts[b.key]!;
+          return avgB.compareTo(avgA);
         });
 
-    return sortedIds;
+    return sortedIds
+        .map((entry) => (entry.key, entry.value / counts[entry.key]!))
+        .toList();
   }
 
   // TODO
@@ -513,20 +532,24 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
     List<RecipeRating> ratings,
     List<RecipeRating> userSpecificRatings,
   ) {
-    final groupSortedIds = _sortRecipesByRatings(ratings);
-    final userSortedIds = _sortRecipesByRatings(userSpecificRatings);
+    final groupSortedRecord = _sortRecipesByRatings(ratings);
+    final userSortedRecord = _sortRecipesByRatings(userSpecificRatings);
 
     final List<RecipeGroupUserRating> recipeGroupUserRating =
         recipes.map((r) {
           return RecipeGroupUserRating(
             userRating:
-                userSortedIds.contains(r.id)
-                    ? userSortedIds.indexOf(r.id).toDouble()
-                    : double.infinity,
+                userSortedRecord.any((record) => record.$1 == r.id)
+                    ? userSortedRecord
+                        .firstWhere((record) => record.$1 == r.id)
+                        .$2
+                    : 0,
             groupRating:
-                groupSortedIds.contains(r.id)
-                    ? groupSortedIds.indexOf(r.id).toDouble()
-                    : double.infinity,
+                groupSortedRecord.any((record) => record.$1 == r.id)
+                    ? groupSortedRecord
+                        .firstWhere((record) => record.$1 == r.id)
+                        .$2
+                    : 0,
             recipe: r,
           );
         }).toList();
@@ -659,7 +682,7 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
             (ranking) => ranking.recipeId == r.recipe.id,
           );
 
-          if (associatedRankingIndex == -1) {
+          if (associatedRankingIndex == 0) {
             return RecipeRating(
               id: null,
               createdAt: DateTime.now().toIso8601String(),
