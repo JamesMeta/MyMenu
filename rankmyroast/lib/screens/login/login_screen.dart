@@ -6,6 +6,7 @@ import 'package:rankmyroast/screens/login/classes/clipped_container.dart';
 import 'package:rankmyroast/screens/login/classes/login_screen_theme.dart';
 import 'package:rankmyroast/screens/login/classes/sign_in_with_google.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 const serverClientId =
     "474584121880-5f7qh4hd4eonbpirt35mnddrlmahma9n.apps.googleusercontent.com";
@@ -268,17 +269,39 @@ class _LoginScreenState extends State<LoginScreen> with SnackbarService {
                                               ),
                                     ),
                                   ),
-                                  TextButton(
-                                    style: LoginScreenTheme.textButtonStyle,
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      TextButton(
+                                        style: LoginScreenTheme.textButtonStyle,
 
-                                    onPressed: () {
-                                      context.push("/login/create-account");
-                                    },
-                                    child: Text(
-                                      "Don't have an account? Sign Up",
-                                      style:
-                                          LoginScreenTheme.textButtonTextStyle,
-                                    ),
+                                        onPressed: () {
+                                          context.push("/login/create-account");
+                                        },
+                                        child: Text(
+                                          "Don't have an account?",
+                                          style:
+                                              LoginScreenTheme
+                                                  .textButtonTextStyle,
+                                        ),
+                                      ),
+                                      TextButton(
+                                        style: LoginScreenTheme.textButtonStyle,
+
+                                        onPressed: () {
+                                          context.push(
+                                            "/login/forgot-password",
+                                          );
+                                        },
+                                        child: Text(
+                                          "Forgot password?",
+                                          style:
+                                              LoginScreenTheme
+                                                  .textButtonTextStyle,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),

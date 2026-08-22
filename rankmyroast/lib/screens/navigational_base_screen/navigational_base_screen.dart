@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rankmyroast/common_widgets/confirmation_dialog_widget.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/schedule_view.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/groups/groups_view.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/home/home_view.dart';
@@ -48,11 +49,7 @@ class _NavigationalBaseScreenState extends State<NavigationalBaseScreen> {
             icon: Icon(Icons.settings, color: Colors.white),
           ),
           IconButton(
-            onPressed:
-                () => showDialog(
-                  context: context,
-                  builder: (BuildContext context) => SignOutDialogWidget(),
-                ),
+            onPressed: _handleSignOut,
             icon: Icon(Icons.logout, color: Colors.white),
           ),
         ],
@@ -111,6 +108,24 @@ class _NavigationalBaseScreenState extends State<NavigationalBaseScreen> {
 
   void _goToSettings() {
     context.push("/settings");
+  }
+
+  Future<void> _handleSignOut() async {
+    final response = await showDialog(
+      context: context,
+      builder:
+          (context) => ConfirmationDialogWidget(
+            title: "Sign Out",
+            content: "Are you sure you want to sign out?",
+            confirmButtonText: "Sign Out",
+            cancelButtonText: "Cancel",
+          ),
+    );
+
+    if (response == true && mounted) {
+      SupabaseHelper.auth.authSignOut();
+      context.go("/login");
+    }
   }
 
   Future<void> _handleUsername() async {
