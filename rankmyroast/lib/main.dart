@@ -9,6 +9,7 @@ import 'package:rankmyroast/classes/extra/view_recipe_extra.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/screens/login/confirm_email_screen.dart';
 import 'package:rankmyroast/screens/login/create_account_screen.dart';
+import 'package:rankmyroast/screens/login/forgot_password_screen.dart';
 import 'package:rankmyroast/screens/login/login_screen.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/navigational_base_screen.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/screens/create/create_event_screen.dart';
@@ -157,6 +158,10 @@ final GoRouter _router = GoRouter(
                       ConfirmEmailScreen(extra: state.extra as List<String>),
             ),
           ],
+        ),
+        GoRoute(
+          path: '/forgot-password',
+          builder: (context, state) => const ForgotPasswordScreen(),
         ),
       ],
     ),
