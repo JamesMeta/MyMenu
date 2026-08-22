@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +8,7 @@ import 'package:rankmyroast/screens/login/classes/login_screen_theme.dart';
 import 'package:rankmyroast/screens/login/classes/sign_in_with_google.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const serverClientId =
     "474584121880-5f7qh4hd4eonbpirt35mnddrlmahma9n.apps.googleusercontent.com";
@@ -303,6 +305,36 @@ class _LoginScreenState extends State<LoginScreen> with SnackbarService {
                                       ),
                                     ],
                                   ),
+
+                                  Text.rich(
+                                    TextSpan(
+                                      text: "By signing in, you agree to our ",
+
+                                      children: [
+                                        TextSpan(
+                                          text: "Privacy Policy",
+                                          style: LoginScreenTheme
+                                              .textButtonTextStyle
+                                              ?.copyWith(
+                                                color:
+                                                    Theme.of(
+                                                      context,
+                                                    ).colorScheme.primary,
+                                                decoration:
+                                                    TextDecoration.underline,
+                                              ),
+                                          recognizer:
+                                              TapGestureRecognizer()
+                                                ..onTap =
+                                                    () => _launchWebUrl(
+                                                      'https://mymenu-privacy.vercel.app/',
+                                                    ),
+                                        ),
+                                        const TextSpan(text: "."),
+                                      ],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ],
                               ),
                             ],
@@ -318,6 +350,14 @@ class _LoginScreenState extends State<LoginScreen> with SnackbarService {
         ),
       ),
     );
+  }
+
+  // Helper function to launch web URLs safely
+  Future<void> _launchWebUrl(String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
+      debugPrint('Could not launch $url');
+    }
   }
 
   Future<void> _handleSignIn() async {
