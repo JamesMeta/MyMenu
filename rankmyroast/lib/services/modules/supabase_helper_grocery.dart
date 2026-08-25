@@ -24,6 +24,22 @@ class SupabaseHelperGrocery {
     }
   }
 
+  Future<List<Grocery>?> getGroceriesForUser() async {
+    try {
+      final response = await _client.from('grocery').select("*");
+
+      return response
+          .map<Grocery>((grocery) => Grocery.fromMap(grocery))
+          .toList();
+    } on Exception catch (e) {
+      SupabaseHelper.logging.logEvent(
+        type: "error",
+        location: "supabase_helper_grocery.dart:08",
+        content: "Error getting groceries by group id: $e",
+      );
+    }
+  }
+
   Future<bool?> insertGrocery(List<Grocery> groceries) async {
     try {
       final response = await _client.from('grocery').insert(groceries).select();
