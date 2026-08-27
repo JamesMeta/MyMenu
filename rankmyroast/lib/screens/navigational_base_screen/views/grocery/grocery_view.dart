@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rankmyroast/classes/modals/grocery.dart';
+import 'package:rankmyroast/classes/modals/grocery_list.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
 
 const String routeName = '/grocery';
@@ -13,7 +14,7 @@ class GroceryView extends StatefulWidget {
 }
 
 class _GroceryViewState extends State<GroceryView> {
-  late Future<List<Grocery>?> _grocery;
+  late Future<List<GroceryList>?> _grocery;
 
   @override
   void initState() {
@@ -153,7 +154,7 @@ class _GroceryViewState extends State<GroceryView> {
     );
   }
 
-  Future<List<Grocery>?> _getGroceryList() async {
+  Future<List<GroceryList>?> _getGroceryList() async {
     return SupabaseHelper.grocery.getGroceriesForUser();
   }
 }

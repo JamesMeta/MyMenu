@@ -1,4 +1,5 @@
 import 'package:rankmyroast/classes/modals/grocery.dart';
+import 'package:rankmyroast/classes/modals/grocery_list.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -24,18 +25,21 @@ class SupabaseHelperGrocery {
     }
   }
 
-  Future<List<Grocery>?> getGroceriesForUser() async {
+  Future<List<GroceryList>?> getGroceriesForUser() async {
     try {
-      final response = await _client.from('grocery').select("*");
+      final response = await _client.from('grocery_list').select('''
+      *,
+      grocery (*)
+    ''');
 
       return response
-          .map<Grocery>((grocery) => Grocery.fromMap(grocery))
+          .map((groceryList) => GroceryList.fromMap(groceryList))
           .toList();
     } on Exception catch (e) {
       SupabaseHelper.logging.logEvent(
         type: "error",
-        location: "supabase_helper_grocery.dart:08",
-        content: "Error getting groceries by group id: $e",
+        location: "supabase_helper_grocery.dart:28",
+        content: "Error getting groceries by user: $e",
       );
     }
   }
