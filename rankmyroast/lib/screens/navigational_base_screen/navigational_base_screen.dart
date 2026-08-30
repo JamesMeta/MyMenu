@@ -28,8 +28,9 @@ class _NavigationalBaseScreenState extends State<NavigationalBaseScreen> {
 
   final List<Widget> navigationalViews = [
     ScheduleView(),
-    HomeView(),
+
     GroupsView(),
+    HomeView(),
     GroceryView(),
     RecipeView(),
   ];
@@ -88,14 +89,14 @@ class _NavigationalBaseScreenState extends State<NavigationalBaseScreen> {
             ),
 
             NavigationDestination(
-              icon: Icon(Icons.home_outlined, size: UNSELECTED_ICON_SIZE),
-              selectedIcon: Icon(Icons.home, size: SELECTED_ICON_SIZE),
-              label: 'Home',
-            ),
-            NavigationDestination(
               icon: Icon(Icons.group_outlined, size: UNSELECTED_ICON_SIZE),
               selectedIcon: Icon(Icons.group, size: SELECTED_ICON_SIZE),
               label: 'Group',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined, size: UNSELECTED_ICON_SIZE),
+              selectedIcon: Icon(Icons.home, size: SELECTED_ICON_SIZE),
+              label: 'Home',
             ),
             NavigationDestination(
               icon: Icon(

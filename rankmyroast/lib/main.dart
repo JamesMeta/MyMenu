@@ -6,6 +6,7 @@ import 'package:rankmyroast/classes/extra/create_recipe_extra.dart';
 import 'package:rankmyroast/classes/extra/rank_recipe_extra.dart';
 import 'package:rankmyroast/classes/extra/select_recipe_extra.dart';
 import 'package:rankmyroast/classes/extra/view_recipe_extra.dart';
+import 'package:rankmyroast/classes/modals/grocery_list.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/screens/login/confirm_email_screen.dart';
 import 'package:rankmyroast/screens/login/create_account_screen.dart';
@@ -15,6 +16,7 @@ import 'package:rankmyroast/screens/navigational_base_screen/navigational_base_s
 import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/screens/create/create_event_screen.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/screens/create/screens/select_recipe_screen.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/grocery/grocery_view.dart';
+import 'package:rankmyroast/screens/navigational_base_screen/views/grocery/screens/viewer/view_grocery_list_screen.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/groups/screens/create_group_screen.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/create/create_recipe_screen.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/rank/rank_recipe_screen.dart';
@@ -60,6 +62,20 @@ final GoRouter _router = GoRouter(
           builder: (context, state) {
             return const GroceryView();
           },
+          routes: [
+            GoRoute(
+              path: '/list-viewer',
+              builder: (context, state) {
+                if (state.extra is GroceryList) {
+                  final extra = state.extra as GroceryList;
+
+                  return ViewGroceryListScreen(extra: extra);
+                }
+
+                return const ViewGroceryListScreen(extra: null);
+              },
+            ),
+          ],
         ),
         GoRoute(
           path: '/create-group',

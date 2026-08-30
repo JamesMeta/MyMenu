@@ -22,6 +22,7 @@ class SupabaseHelperGrocery {
         location: "supabase_helper_grocery.dart:08",
         content: "Error getting groceries by group id: $e",
       );
+      return null;
     }
   }
 
@@ -41,6 +42,7 @@ class SupabaseHelperGrocery {
         location: "supabase_helper_grocery.dart:28",
         content: "Error getting groceries by user: $e",
       );
+      return null;
     }
   }
 
@@ -59,6 +61,7 @@ class SupabaseHelperGrocery {
         location: "supabase_helper_grocery.dart:27",
         content: "Error inserting grocery: $e",
       );
+      return null;
     }
   }
 
@@ -82,6 +85,7 @@ class SupabaseHelperGrocery {
         location: "supabase_helper_grocery.dart:45",
         content: "Error updating grocery: $grocery. error: $e",
       );
+      return null;
     }
   }
 
@@ -105,6 +109,7 @@ class SupabaseHelperGrocery {
         location: "supabase_helper_grocery.dart:68",
         content: "Error deleting grocery: $grocery. error: $e",
       );
+      return null;
     }
   }
 }
