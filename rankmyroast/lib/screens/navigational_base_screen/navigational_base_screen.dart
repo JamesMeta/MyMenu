@@ -24,7 +24,7 @@ class NavigationalBaseScreen extends StatefulWidget {
 }
 
 class _NavigationalBaseScreenState extends State<NavigationalBaseScreen> {
-  int navigationalIndex = 1;
+  int navigationalIndex = 2;
 
   final List<Widget> navigationalViews = [
     ScheduleView(),

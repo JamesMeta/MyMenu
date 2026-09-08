@@ -19,7 +19,7 @@ class SupabaseHelperGrocery {
     } on Exception catch (e) {
       SupabaseHelper.logging.logEvent(
         type: "error",
-        location: "supabase_helper_grocery.dart:08",
+        location: "supabase_helper_grocery.dart:09",
         content: "Error getting groceries by group id: $e",
       );
       return null;
@@ -39,7 +39,7 @@ class SupabaseHelperGrocery {
     } on Exception catch (e) {
       SupabaseHelper.logging.logEvent(
         type: "error",
-        location: "supabase_helper_grocery.dart:28",
+        location: "supabase_helper_grocery.dart:29",
         content: "Error getting groceries by user: $e",
       );
       return null;
@@ -58,7 +58,7 @@ class SupabaseHelperGrocery {
     } on Exception catch (e) {
       SupabaseHelper.logging.logEvent(
         type: "error",
-        location: "supabase_helper_grocery.dart:27",
+        location: "supabase_helper_grocery.dart:49",
         content: "Error inserting grocery: $e",
       );
       return null;
@@ -82,7 +82,7 @@ class SupabaseHelperGrocery {
     } on Exception catch (e) {
       SupabaseHelper.logging.logEvent(
         type: "error",
-        location: "supabase_helper_grocery.dart:45",
+        location: "supabase_helper_grocery.dart:68",
         content: "Error updating grocery: $grocery. error: $e",
       );
       return null;
@@ -106,8 +106,41 @@ class SupabaseHelperGrocery {
     } on Exception catch (e) {
       SupabaseHelper.logging.logEvent(
         type: "error",
-        location: "supabase_helper_grocery.dart:68",
+        location: "supabase_helper_grocery.dart:92",
         content: "Error deleting grocery: $grocery. error: $e",
+      );
+      return null;
+    }
+  }
+
+  Future<bool?> createGroceryList(String name, String? groupId) async {
+    try {
+      late List<Map<String, dynamic>> response;
+
+      if (groupId == null) {
+        response =
+            await _client.from('grocery_list').insert({
+              'name': name,
+              'user_id': SupabaseHelper.users.getAuthId(),
+            }).select();
+      } else {
+        response =
+            await _client.from('grocery_list').insert({
+              'name': name,
+              'group_id': groupId,
+            }).select();
+      }
+
+      if (response.isNotEmpty) {
+        return true;
+      } else {
+        return false;
+      }
+    } on Exception catch (e) {
+      SupabaseHelper.logging.logEvent(
+        type: "error",
+        location: "supabase_helper_grocery.dart:116",
+        content: "Error creating grocery list: $name. error: $e",
       );
       return null;
     }
