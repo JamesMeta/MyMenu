@@ -119,10 +119,7 @@ class SupabaseHelperGrocery {
 
       if (groupId == null) {
         response =
-            await _client.from('grocery_list').insert({
-              'name': name,
-              'user_id': SupabaseHelper.users.getAuthId(),
-            }).select();
+            await _client.from('grocery_list').insert({'name': name}).select();
       } else {
         response =
             await _client.from('grocery_list').insert({

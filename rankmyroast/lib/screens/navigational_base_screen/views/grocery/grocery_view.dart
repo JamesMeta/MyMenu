@@ -154,105 +154,92 @@ class _GroceryViewState extends State<GroceryView> {
               }
             },
           ),
-          FutureBuilder(
-            future: _grocery,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.connectionState == ConnectionState.done) {
-                final grocery = snapshot.data;
+          Expanded(
+            child: FutureBuilder(
+              future: _grocery,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.connectionState == ConnectionState.done) {
+                  final grocery = snapshot.data;
 
-                if (grocery != null && grocery.isNotEmpty) {
-                  return LayoutBuilder(
-                    builder: (context, constraints) {
-                      const double idealItemWidth = 140.0;
+                  if (grocery != null && grocery.isNotEmpty) {
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        const double idealItemWidth = 140.0;
 
-                      int crossAxisCount =
-                          (constraints.maxWidth / idealItemWidth).floor();
+                        int crossAxisCount =
+                            (constraints.maxWidth / idealItemWidth).floor();
 
-                      if (crossAxisCount < 2) crossAxisCount = 2;
+                        if (crossAxisCount < 2) crossAxisCount = 2;
 
-                      return RefreshIndicator(
-                        onRefresh: () async {
-                          await _refreshData();
-                        },
-                        color: Colors.white, // Color of the spinner
-                        backgroundColor: Colors.green,
-                        child: GridView.builder(
-                          shrinkWrap: true,
-
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: crossAxisCount,
-                                childAspectRatio: 0.95,
-                                mainAxisSpacing: 16,
-                                crossAxisSpacing: 16,
-                              ),
-                          itemCount: grocery.length,
-                          itemBuilder: (context, index) {
-                            final list = grocery[index];
-                            return GestureDetector(
-                              onTap: () async {
-                                // final response = await context.push(
-                                //   "/base/view-recipe",
-                                //   extra: ViewRecipeExtra(
-                                //     group: _selectedGroup!,
-                                //     recipe: recipe,
-                                //     userGroups: groups,
-                                //   ),
-                                // );
-
-                                // if (response != null &&
-                                //     response is bool &&
-                                //     response) {
-                                //   _refreshData();
-                                // }
-                              },
-                              child: GroceryListGridTileWidget(
-                                groceryList: list,
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  );
-                } else if (grocery != null && grocery.isEmpty) {
-                  return Column(
-                    children: [
-                      Expanded(
-                        child: RefreshIndicator(
+                        return RefreshIndicator(
                           onRefresh: () async {
-                            // Industry standard: await the refresh logic directly
-                            // so the indicator stays visible until the data is fetched.
                             await _refreshData();
                           },
-                          child: ListView(
-                            // This is the critical line:
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            children: [
-                              SizedBox(
-                                // Ensure the empty state takes up the full height
-                                // so the entire screen is "pullable"
-                                height:
-                                    MediaQuery.of(context).size.height * 0.5,
-                                child: const Center(
-                                  child: Text("No recipes found"),
+                          color: Colors.white, // Color of the spinner
+                          backgroundColor: Colors.green,
+                          child: GridView.builder(
+                            shrinkWrap: true,
+
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: crossAxisCount,
+                                  childAspectRatio: 0.95,
+                                  mainAxisSpacing: 16,
+                                  crossAxisSpacing: 16,
                                 ),
-                              ),
-                            ],
+                            itemCount: grocery.length,
+                            itemBuilder: (context, index) {
+                              final list = grocery[index];
+                              return GestureDetector(
+                                onTap: () async {},
+                                child: GroceryListGridTileWidget(
+                                  groceryList: list,
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  } else if (grocery != null && grocery.isEmpty) {
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              // Industry standard: await the refresh logic directly
+                              // so the indicator stays visible until the data is fetched.
+                              await _refreshData();
+                            },
+                            child: ListView(
+                              // This is the critical line:
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              children: [
+                                SizedBox(
+                                  // Ensure the empty state takes up the full height
+                                  // so the entire screen is "pullable"
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.5,
+                                  child: const Center(
+                                    child: Text("No recipes found"),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
+                      ],
+                    );
+                  } else {
+                    return Center(child: Text("The Data is null"));
+                  }
                 } else {
-                  return Center(child: Text("The Data is null"));
+                  return Center(child: Text("The Data is never coming"));
                 }
-              } else {
-                return Center(child: Text("The Data is never coming"));
-              }
-            },
+              },
+            ),
           ),
         ],
       ),
