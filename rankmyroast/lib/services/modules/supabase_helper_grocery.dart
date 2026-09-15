@@ -91,7 +91,7 @@ class SupabaseHelperGrocery {
 
   Future<bool?> deleteGrocery(Grocery grocery) async {
     try {
-      await _client.from('grocery').delete().eq("id", grocery.id);
+      await _client.from('grocery').delete().eq('id', grocery.id);
 
       final response = await _client
           .from("grocery")

@@ -2,7 +2,7 @@ import 'package:rankmyroast/classes/modals/grocery.dart';
 
 class GroceryList {
   final String id;
-  final String name;
+  String name;
   final String? groupId;
   final String userId;
   final List<Grocery> groceryList;

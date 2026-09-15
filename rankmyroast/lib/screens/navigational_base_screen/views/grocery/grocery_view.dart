@@ -186,8 +186,8 @@ class _GroceryViewState extends State<GroceryView> {
                                 SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: crossAxisCount,
                                   childAspectRatio: 0.95,
-                                  mainAxisSpacing: 16,
-                                  crossAxisSpacing: 16,
+                                  mainAxisSpacing: 2,
+                                  crossAxisSpacing: 2,
                                 ),
                             itemCount: grocery.length,
                             itemBuilder: (context, index) {
@@ -196,6 +196,7 @@ class _GroceryViewState extends State<GroceryView> {
                                 onTap: () async {},
                                 child: GroceryListGridTileWidget(
                                   groceryList: list,
+                                  refreshCallback: () => _refreshData(),
                                 ),
                               );
                             },
