@@ -177,38 +177,6 @@ class _RecipeViewState extends State<RecipeView> {
                 final groups = snapshot.data;
 
                 if (groups != null && groups.isNotEmpty) {
-                  // late final List<Group> newGroups;
-                  // final sqliteHelper = SqliteHelper();
-
-                  // if (sqliteHelper.pastGroupsContainsCurrentGroups(
-                  //   groups,
-                  //   _groupOrders,
-                  // )) {
-                  //   newGroups =
-                  //       _groupOrders
-                  //           .map(
-                  //             (order) => groups.firstWhere(
-                  //               (group) => group.id == order.groupId,
-                  //             ),
-                  //           )
-                  //           .toList();
-                  // } else {
-                  //   newGroups =
-                  //       _groupOrders
-                  //           .map(
-                  //             (order) => groups.firstWhere(
-                  //               (group) => group.id == order.groupId,
-                  //             ),
-                  //           )
-                  //           .toList();
-                  //   newGroups.addAll(
-                  //     groups.where((group) => !newGroups.contains(group)),
-                  //   );
-                  // }
-
-                  // _selectedGroup = newGroups.first;
-                  // _recipes = _selectedGroup!.recipes;
-
                   return SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
