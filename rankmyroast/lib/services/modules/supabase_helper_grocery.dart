@@ -142,4 +142,31 @@ class SupabaseHelperGrocery {
       return null;
     }
   }
+
+  Future<bool?> updateGroceryListName(
+    String groceryListId,
+    String newName,
+  ) async {
+    try {
+      final response =
+          await _client
+              .from('grocery_list')
+              .update({'name': newName})
+              .eq('id', groceryListId)
+              .select();
+      if (response.isNotEmpty) {
+        return true;
+      } else {
+        return false;
+      }
+    } on Exception catch (e) {
+      SupabaseHelper.logging.logEvent(
+        type: "error",
+        location: "supabase_helper_grocery.dart:146",
+        content:
+            "Error updating grocery list name for id: $groceryListId. error: $e",
+      );
+      return null;
+    }
+  }
 }

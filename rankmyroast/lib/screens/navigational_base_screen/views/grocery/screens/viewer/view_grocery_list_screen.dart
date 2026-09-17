@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
 import 'package:rankmyroast/classes/modals/grocery.dart';
 import 'package:rankmyroast/classes/modals/grocery_list.dart';
+import 'package:rankmyroast/common_widgets/inline_editable_title.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
 
 class ViewGroceryListScreen extends StatefulWidget {
@@ -22,7 +23,7 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
   bool _showCheckedItems = false;
   bool _isEditingTitle = false;
 
-  final TextEditingController _titleController = TextEditingController();
+  late final String _title;
 
   @override
   void initState() {
@@ -33,14 +34,8 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
     _checkedItems =
         _groceryList?.groceryList.where((item) => item.completed).toList() ??
         [];
-    _titleController.text = _groceryList?.name ?? '';
+    _title = _groceryList?.name ?? '';
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _titleController.dispose();
-    super.dispose();
   }
 
   @override
@@ -59,48 +54,11 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (_isEditingTitle)
-                TextField(
-                  controller: _titleController,
-                  autofocus: true,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  decoration: const InputDecoration(border: InputBorder.none),
-                  onChanged: (value) {
-                    _groceryList?.name = value;
-                  },
-                  onSubmitted: (_) {
-                    setState(() {
-                      _isEditingTitle = false;
-                    });
-                  },
-                )
-              else
-                GestureDetector(
-                  onTap:
-                      _groceryList == null
-                          ? null
-                          : () {
-                            _titleController.text = _groceryList.name;
-                            _titleController
-                                .selection = TextSelection.collapsed(
-                              offset: _titleController.text.length,
-                            );
-                            setState(() {
-                              _isEditingTitle = true;
-                            });
-                          },
-                  child: Text(
-                    _groceryList?.name ?? 'No Grocery List',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+              InlineEditableTitle(
+                initialText: _title,
+                onSubmitted: (value) => _updateGroceryListName(value),
+              ),
+              const SizedBox(height: 16),
 
               ListView(
                 shrinkWrap: true,
@@ -192,6 +150,27 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
 
   Future<bool?> _deleteGroceryItem(Grocery item) async {
     final response = await SupabaseHelper.grocery.deleteGrocery(item);
+    return response;
+  }
+
+  Future<bool?> _updateGroceryListName(String newName) async {
+    if (_groceryList == null) return false;
+
+    final oldName = _groceryList.name;
+
+    setState(() {
+      _groceryList.name = newName;
+    });
+
+    final response = await SupabaseHelper.grocery.updateGroceryListName(
+      _groceryList.id,
+      newName,
+    );
+    if (response == false) {
+      setState(() {
+        _groceryList.name = oldName;
+      });
+    }
     return response;
   }
 }
