@@ -6,11 +6,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class GroceryListGridTileWidget extends StatefulWidget {
   final GroceryList groceryList;
   final VoidCallback refreshCallback;
+  final VoidCallback openedCallback;
 
   const GroceryListGridTileWidget({
     super.key,
     required this.groceryList,
     required this.refreshCallback,
+    required this.openedCallback,
   });
 
   @override
@@ -31,6 +33,8 @@ class _GroceryListGridTileWidgetState extends State<GroceryListGridTileWidget> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
+        widget.openedCallback();
+
         final response = await context.push(
           '/base/grocery/list-viewer',
           extra: _groceryList,

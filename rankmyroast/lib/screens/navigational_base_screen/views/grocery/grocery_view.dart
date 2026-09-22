@@ -3,8 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rankmyroast/classes/modals/grocery.dart';
 import 'package:rankmyroast/classes/modals/grocery_list.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
+import 'package:rankmyroast/classes/modals/list_order.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/grocery/widgets/create_list_dialog_widget.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/grocery/widgets/grocery_list_grid_tile_widget.dart';
+import 'package:rankmyroast/services/sqlite_helper.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
 
 const String routeName = '/grocery';
@@ -109,7 +111,7 @@ class _GroceryViewState extends State<GroceryView> {
                             GestureDetector(
                               onTap:
                                   () => setState(() {
-                                    //TODO
+                                    _refreshData();
                                   }),
                               child: Icon(
                                 Icons.refresh_rounded,
@@ -197,6 +199,8 @@ class _GroceryViewState extends State<GroceryView> {
                                 child: GroceryListGridTileWidget(
                                   groceryList: list,
                                   refreshCallback: () => _refreshData(),
+                                  openedCallback:
+                                      () => _updateListOrder(list.id),
                                 ),
                               );
                             },
@@ -254,7 +258,56 @@ class _GroceryViewState extends State<GroceryView> {
   }
 
   Future<List<GroceryList>?> _getGroceryList() async {
-    return SupabaseHelper.grocery.getGroceriesForUser();
+    final sqliteHelper = SqliteHelper();
+
+    final response = await SupabaseHelper.grocery.getGroceriesForUser();
+
+    if (response != null) {
+      final List<GroceryList> groceryLists = response;
+      final List<ListOrder> listOrders = await sqliteHelper.getListOrders();
+      await sqliteHelper.clearListOrdersForLegacyLists(
+        groceryLists.map((groceryList) => groceryList.id.toString()).toList(),
+      );
+
+      if (!sqliteHelper.pastListOrdersContainsCurrentLists(
+        groceryLists.map((item) => item.id).toList(),
+        listOrders,
+      )) {
+        sqliteHelper.insertListOrder(
+          groceryLists
+              .map(
+                (groceryList) => {
+                  'list_id': groceryList.id,
+                  'last_updated': DateTime.now().toIso8601String(),
+                },
+              )
+              .toList(),
+        );
+      }
+
+      final updatedListOrders = await sqliteHelper.getListOrders();
+
+      groceryLists.sort((a, b) {
+        final aOrder = updatedListOrders.firstWhere(
+          (order) => order.listId == a.id,
+          orElse: () => ListOrder(listId: a.id, lastUpdated: DateTime.now()),
+        );
+        final bOrder = updatedListOrders.firstWhere(
+          (order) => order.listId == b.id,
+          orElse: () => ListOrder(listId: b.id, lastUpdated: DateTime.now()),
+        );
+        return bOrder.lastUpdated.compareTo(aOrder.lastUpdated);
+      });
+
+      return groceryLists;
+    } else {
+      SupabaseHelper.logging.logEvent(
+        type: "error",
+        location: "grocery_view.dart:258",
+        content: "Error fetching grocery: $response",
+      );
+      return null;
+    }
   }
 
   Future<bool?> _showCreateListDialog() async {
@@ -274,5 +327,10 @@ class _GroceryViewState extends State<GroceryView> {
 
   Future<List<Group>?> _getGroups() async {
     return SupabaseHelper.groups.getGroupsForUser();
+  }
+
+  Future<void> _updateListOrder(String listId) async {
+    final sqliteHelper = SqliteHelper();
+    await sqliteHelper.updateListOrder(listId, DateTime.now());
   }
 }
