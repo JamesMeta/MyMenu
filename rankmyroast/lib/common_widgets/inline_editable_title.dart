@@ -4,12 +4,18 @@ class InlineEditableTitle extends StatefulWidget {
   final String initialText;
   final TextStyle? style;
   final ValueChanged<String> onSubmitted;
+  final TextAlign textAlign;
+  final int maxLinesEdit;
+  final int maxLinesStatic;
 
   const InlineEditableTitle({
     super.key,
     required this.initialText,
     this.style,
     required this.onSubmitted,
+    required this.textAlign,
+    required this.maxLinesEdit,
+    required this.maxLinesStatic,
   });
 
   @override
@@ -26,6 +32,7 @@ class _InlineEditableTitleState extends State<InlineEditableTitle> {
     super.initState();
     _controller = TextEditingController(text: widget.initialText);
     _focusNode = FocusNode();
+    _isEditing = widget.initialText == '';
   }
 
   @override
@@ -72,10 +79,12 @@ class _InlineEditableTitleState extends State<InlineEditableTitle> {
           controller: _controller,
           focusNode: _focusNode,
           autofocus: true,
+
           style: activeStyle,
-          maxLines: 1,
+          textAlign: widget.textAlign,
+          maxLines: widget.maxLinesEdit,
           // This removes the underline and extra padding, making it look seamless
-          decoration: const InputDecoration.collapsed(hintText: ''),
+          decoration: InputDecoration.collapsed(hintText: ''),
           onSubmitted: (_) => _saveChanges(),
         ),
       );
@@ -90,7 +99,12 @@ class _InlineEditableTitleState extends State<InlineEditableTitle> {
       borderRadius: BorderRadius.circular(4),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-        child: Text(_controller.text, style: activeStyle),
+        child: Text(
+          _controller.text,
+          style: activeStyle,
+          maxLines: widget.maxLinesStatic,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
     );
   }

@@ -64,8 +64,8 @@ class _GroceryViewState extends State<GroceryView> {
                     ),
                     Expanded(child: SizedBox()),
                     IconButton(
-                      onPressed: () {
-                        //TODO
+                      onPressed: () async {
+                        await _showCreateListDialog();
                       },
                       icon: Icon(Icons.add, color: Colors.white, size: 22.sp),
                       constraints: BoxConstraints(

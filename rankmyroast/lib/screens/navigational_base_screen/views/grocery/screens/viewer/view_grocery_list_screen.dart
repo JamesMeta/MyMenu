@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
 import 'package:rankmyroast/classes/modals/grocery.dart';
@@ -57,6 +58,10 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
               InlineEditableTitle(
                 initialText: _title,
                 onSubmitted: (value) => _updateGroceryListName(value),
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
+                maxLinesEdit: 2,
+                maxLinesStatic: 2,
               ),
               const SizedBox(height: 16),
 
@@ -66,8 +71,32 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
                   _groceryList != null
                       ? ListView.builder(
                         shrinkWrap: true,
-                        itemCount: _uncheckedItems.length,
+                        itemCount: _uncheckedItems.length + 1,
                         itemBuilder: (context, index) {
+                          if (index == _uncheckedItems.length) {
+                            return ListTile(
+                              leading: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minWidth: 48,
+                                  minHeight: 48,
+                                ),
+                                child: Icon(Icons.add),
+                              ),
+                              title: Text('Add Item'),
+                              onTap: () {
+                                final newItem = Grocery(
+                                  id: DateTime.now().millisecondsSinceEpoch,
+                                  item: '',
+                                  completed: false,
+                                  groupId: _groceryList!.id,
+                                );
+                                setState(() {
+                                  _uncheckedItems.add(newItem);
+                                });
+                              },
+                            );
+                          }
+
                           final item = _uncheckedItems[index];
                           return _buildListTile(item, _uncheckedItems);
                         },
@@ -113,7 +142,14 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
 
   Widget _buildListTile(Grocery item, List<Grocery> groceryListPointer) {
     return ListTile(
-      title: Text(item.item),
+      title: InlineEditableTitle(
+        initialText: item.item,
+        onSubmitted: (value) => _updateGroceryItemName(item, value),
+        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.normal),
+        maxLinesEdit: 1,
+        maxLinesStatic: 5,
+      ),
       leading: Checkbox(
         value: item.completed,
         onChanged: (value) {
@@ -145,6 +181,21 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
 
   Future<bool?> _updateGroceryItemCompletion(Grocery item) async {
     final response = await SupabaseHelper.grocery.updateGrocery(item);
+    return response;
+  }
+
+  Future<bool?> _updateGroceryItemName(Grocery item, String newName) async {
+    final oldName = item.item;
+    setState(() {
+      item.item = newName;
+    });
+
+    final response = await SupabaseHelper.grocery.updateGrocery(item);
+    if (response == false) {
+      setState(() {
+        item.item = oldName;
+      });
+    }
     return response;
   }
 

@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Grocery {
   final int id;
-  final String item;
+  String item;
   bool completed;
   final String groupId;
 
