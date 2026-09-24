@@ -19,22 +19,30 @@ class ViewGroceryListScreen extends StatefulWidget {
 class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
     with SnackbarService {
   late final GroceryList? _groceryList;
-  late final List<Grocery> _uncheckedItems;
-  late final List<Grocery> _checkedItems;
-  bool _showCheckedItems = false;
+
   bool _isEditingTitle = false;
 
   late final String _title;
 
+  final List<Grocery> _recentlyCompleted = [];
+
+  List<Grocery> get _uncheckedItems =>
+      _groceryList?.groceryList
+          .where((item) => !item.completed || _recentlyCompleted.contains(item))
+          .toList() ??
+      [];
+
+  List<Grocery> get _checkedItems =>
+      _groceryList?.groceryList
+          .where((item) => item.completed && !_recentlyCompleted.contains(item))
+          .toList() ??
+      [];
+
   @override
   void initState() {
     _groceryList = widget.extra;
-    _uncheckedItems =
-        _groceryList?.groceryList.where((item) => !item.completed).toList() ??
-        [];
-    _checkedItems =
-        _groceryList?.groceryList.where((item) => item.completed).toList() ??
-        [];
+    // Instead of storing separate lists, use getters:
+
     _title = _groceryList?.name ?? '';
     super.initState();
   }
@@ -49,92 +57,101 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
         }
       },
       child: Scaffold(
-        appBar: AppBar(),
+        backgroundColor: Colors.green,
+        appBar: AppBar(
+          backgroundColor: Colors.green,
+          foregroundColor: Colors.white,
+        ),
         body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              InlineEditableTitle(
-                initialText: _title,
-                onSubmitted: (value) => _updateGroceryListName(value),
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
-                maxLinesEdit: 2,
-                maxLinesStatic: 2,
-              ),
-              const SizedBox(height: 16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withAlpha(100),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                InlineEditableTitle(
+                  initialText: _title,
+                  onSubmitted: (value) => _updateGroceryListName(value),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLinesEdit: 2,
+                  maxLinesStatic: 2,
+                ),
+                const SizedBox(height: 16),
 
-              ListView(
-                shrinkWrap: true,
-                children: [
-                  _groceryList != null
-                      ? ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: _uncheckedItems.length + 1,
-                        itemBuilder: (context, index) {
-                          if (index == _uncheckedItems.length) {
-                            return ListTile(
-                              leading: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  minWidth: 48,
-                                  minHeight: 48,
-                                ),
-                                child: Icon(Icons.add),
-                              ),
-                              title: Text('Add Item'),
-                              onTap: () {
-                                final newItem = Grocery(
-                                  id: DateTime.now().millisecondsSinceEpoch,
-                                  item: '',
-                                  completed: false,
-                                  groceryListId: _groceryList.id,
+                Expanded(
+                  child: ListView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    children: [
+                      _groceryList != null
+                          ? ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: _uncheckedItems.length + 1,
+                            itemBuilder: (context, index) {
+                              if (index == _uncheckedItems.length) {
+                                return ListTile(
+                                  leading: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      minWidth: 48,
+                                      minHeight: 48,
+                                    ),
+                                    child: Icon(Icons.add),
+                                  ),
+                                  title: Text('Add Item'),
+                                  onTap: () {
+                                    final newItem = Grocery(
+                                      id: DateTime.now().millisecondsSinceEpoch,
+                                      item: '',
+                                      completed: false,
+                                      groceryListId: _groceryList.id,
+                                    );
+                                    setState(() {
+                                      _groceryList.groceryList.add(newItem);
+                                    });
+                                  },
                                 );
-                                setState(() {
-                                  _uncheckedItems.add(newItem);
-                                  _groceryList.groceryList.add(newItem);
-                                });
-                              },
-                            );
-                          }
+                              }
 
-                          final item = _uncheckedItems[index];
-                          return _buildListTile(item, _uncheckedItems);
+                              final item = _uncheckedItems[index];
+                              return _buildListTile(
+                                item,
+                                _groceryList.groceryList,
+                              );
+                            },
+                          )
+                          : Center(child: Text('No grocery list provided.')),
+
+                      Divider(),
+
+                      ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: _checkedItems.length,
+                        itemBuilder: (context, index) {
+                          final item = _checkedItems[index];
+                          return _buildListTile(item, _checkedItems);
                         },
-                      )
-                      : Center(child: Text('No grocery list provided.')),
-
-                  if (!_showCheckedItems) ...[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _showCheckedItems = true;
-                            });
-                          },
-                          child: Text('Show Checked Items'),
-                        ),
-                      ],
-                    ),
-                  ],
-
-                  if (_showCheckedItems) ...[
-                    Divider(),
-
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _checkedItems.length,
-                      itemBuilder: (context, index) {
-                        final item = _checkedItems[index];
-                        return _buildListTile(item, _checkedItems);
-                      },
-                    ),
-                  ],
-                ],
-              ),
-            ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -156,9 +173,14 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
         onChanged: (value) {
           setState(() {
             item.completed = !item.completed;
+            if (item.completed) {
+              _recentlyCompleted.add(item);
+            } else {
+              _recentlyCompleted.remove(item);
+            }
           });
-          _updateGroceryItemCompletion(item).then((success) {
-            if (success == false && mounted) {
+          _updateGroceryItemCompletion(item).then((updatedItem) {
+            if (updatedItem == null && mounted) {
               showSnackbar(context, "Failed to update item.");
             }
           });
@@ -180,28 +202,45 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
     );
   }
 
-  Future<bool?> _updateGroceryItemCompletion(Grocery item) async {
+  Future<Grocery?> _updateGroceryItemCompletion(Grocery item) async {
     final response = await SupabaseHelper.grocery.updateGrocery(item);
     return response;
   }
 
-  Future<bool?> _updateGroceryItemName(Grocery item, String newName) async {
+  Future<Grocery?> _updateGroceryItemName(Grocery item, String newName) async {
     final oldName = item.item;
     setState(() {
       item.item = newName;
     });
 
     final response = await SupabaseHelper.grocery.upsertGrocery(item);
-    if (response == false) {
+    if (response == null) {
       setState(() {
         item.item = oldName;
       });
+    } else {
+      setState(() {
+        final index = _groceryList!.groceryList.indexWhere(
+          (test) => test.id == item.id,
+        );
+        if (index != -1) {
+          _groceryList.groceryList[index] = response;
+        }
+      });
     }
+
     return response;
   }
 
   Future<bool?> _deleteGroceryItem(Grocery item) async {
     final response = await SupabaseHelper.grocery.deleteGrocery(item);
+
+    if (response == true) {
+      setState(() {
+        _groceryList?.groceryList.remove(item);
+      });
+    }
+
     return response;
   }
 

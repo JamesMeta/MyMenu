@@ -46,7 +46,7 @@ class SupabaseHelperGrocery {
     }
   }
 
-  Future<bool?> insertGrocery(List<Grocery> groceries) async {
+  Future<bool?> insertGroceryBulk(List<Grocery> groceries) async {
     try {
       final response =
           await _client
@@ -75,19 +75,21 @@ class SupabaseHelperGrocery {
     }
   }
 
-  Future<bool?> updateGrocery(Grocery grocery) async {
+  Future<Grocery?> updateGrocery(Grocery grocery) async {
     try {
       final response =
           await _client
               .from('grocery')
               .update({"item": grocery.item, "completed": grocery.completed})
               .eq("id", grocery.id)
-              .select();
+              .select()
+              .limit(1)
+              .single();
 
       if (response.isNotEmpty) {
-        return true;
+        return Grocery.fromMap(response);
       } else {
-        return false;
+        return null;
       }
     } on Exception catch (e) {
       SupabaseHelper.logging.logEvent(
@@ -180,7 +182,7 @@ class SupabaseHelperGrocery {
     }
   }
 
-  Future<bool?> upsertGrocery(Grocery grocery) async {
+  Future<Grocery?> upsertGrocery(Grocery grocery) async {
     try {
       final response = await _client
           .from('grocery')
@@ -190,13 +192,41 @@ class SupabaseHelperGrocery {
       if (response.isNotEmpty) {
         return await updateGrocery(grocery);
       } else {
-        return await insertGrocery([grocery]);
+        return await insertGrocery(grocery);
       }
     } on Exception catch (e) {
       SupabaseHelper.logging.logEvent(
         type: "error",
         location: "supabase_helper_grocery.dart:173",
         content: "Error upserting grocery: $grocery. error: $e",
+      );
+      return null;
+    }
+  }
+
+  Future<Grocery?> insertGrocery(Grocery groceries) async {
+    try {
+      final insert = groceries.toMap();
+      insert.remove('id');
+
+      final response =
+          await _client
+              .from('grocery')
+              .insert(insert)
+              .select()
+              .limit(1)
+              .single();
+
+      if (response.isNotEmpty) {
+        return Grocery.fromMap(response);
+      } else {
+        return null;
+      }
+    } on Exception catch (e) {
+      SupabaseHelper.logging.logEvent(
+        type: "error",
+        location: "supabase_helper_grocery.dart:205",
+        content: "Error inserting grocery: $e",
       );
       return null;
     }
