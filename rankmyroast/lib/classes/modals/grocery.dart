@@ -5,13 +5,13 @@ class Grocery {
   final int id;
   String item;
   bool completed;
-  final String groupId;
+  final String groceryListId;
 
   Grocery({
     required this.id,
     required this.item,
     required this.completed,
-    required this.groupId,
+    required this.groceryListId,
   });
 
   factory Grocery.fromMap(Map<String, dynamic> map) {
@@ -19,12 +19,21 @@ class Grocery {
       id: map['id'] ?? 0,
       item: map['item'] ?? '',
       completed: map['completed'] ?? false,
-      groupId: map['group_id'] ?? '',
+      groceryListId: map['grocery_list_id'] ?? '',
     );
   }
 
   @override
   String toString() {
-    return "Grocery($id, $item, $completed, $groupId)";
+    return "Grocery($id, $item, $completed, $groceryListId)";
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'item': item,
+      'completed': completed,
+      'grocery_list_id': groceryListId,
+    };
   }
 }

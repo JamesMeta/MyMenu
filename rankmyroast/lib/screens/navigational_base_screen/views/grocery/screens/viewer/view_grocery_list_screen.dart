@@ -88,10 +88,11 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
                                   id: DateTime.now().millisecondsSinceEpoch,
                                   item: '',
                                   completed: false,
-                                  groupId: _groceryList!.id,
+                                  groceryListId: _groceryList.id,
                                 );
                                 setState(() {
                                   _uncheckedItems.add(newItem);
+                                  _groceryList.groceryList.add(newItem);
                                 });
                               },
                             );
@@ -190,7 +191,7 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
       item.item = newName;
     });
 
-    final response = await SupabaseHelper.grocery.updateGrocery(item);
+    final response = await SupabaseHelper.grocery.upsertGrocery(item);
     if (response == false) {
       setState(() {
         item.item = oldName;

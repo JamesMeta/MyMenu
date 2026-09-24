@@ -26,6 +26,18 @@ class _GroceryListGridTileWidgetState extends State<GroceryListGridTileWidget> {
   @override
   void initState() {
     _groceryList = widget.groceryList;
+
+    // sort the grocery list items by completed status
+    _groceryList.groceryList.sort((a, b) {
+      if (a.completed && !b.completed) {
+        return 1;
+      } else if (!a.completed && b.completed) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
+
     super.initState();
   }
 

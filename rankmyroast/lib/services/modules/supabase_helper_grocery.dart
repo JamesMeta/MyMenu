@@ -48,7 +48,17 @@ class SupabaseHelperGrocery {
 
   Future<bool?> insertGrocery(List<Grocery> groceries) async {
     try {
-      final response = await _client.from('grocery').insert(groceries).select();
+      final response =
+          await _client
+              .from('grocery')
+              .insert(
+                groceries.map((e) {
+                  final groceryMap = e.toMap();
+                  groceryMap.remove('id');
+                  return groceryMap;
+                }).toList(),
+              )
+              .select();
 
       if (response.isNotEmpty) {
         return true;
@@ -165,6 +175,28 @@ class SupabaseHelperGrocery {
         location: "supabase_helper_grocery.dart:146",
         content:
             "Error updating grocery list name for id: $groceryListId. error: $e",
+      );
+      return null;
+    }
+  }
+
+  Future<bool?> upsertGrocery(Grocery grocery) async {
+    try {
+      final response = await _client
+          .from('grocery')
+          .select()
+          .eq("id", grocery.id);
+
+      if (response.isNotEmpty) {
+        return await updateGrocery(grocery);
+      } else {
+        return await insertGrocery([grocery]);
+      }
+    } on Exception catch (e) {
+      SupabaseHelper.logging.logEvent(
+        type: "error",
+        location: "supabase_helper_grocery.dart:173",
+        content: "Error upserting grocery: $grocery. error: $e",
       );
       return null;
     }
