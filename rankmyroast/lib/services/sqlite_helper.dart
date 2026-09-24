@@ -1,5 +1,6 @@
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/group_order.dart';
+import 'package:rankmyroast/classes/modals/list_order.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SqliteHelper {
@@ -36,6 +37,7 @@ class SqliteHelper {
       path,
       version: 1,
       onCreate: _onCreate,
+
       // onUpgrade: _onUpgrade, // Handle future migrations here
     );
   }
@@ -47,6 +49,14 @@ class SqliteHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         group_id TEXT NOT NULL,
         group_index INTEGER NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE listOrder (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        list_id TEXT NOT NULL,
+        last_updated DATETIME NOT NULL
       )
     ''');
   }
@@ -135,5 +145,110 @@ class SqliteHelper {
   Future<void> deleteGroupOrder(String groupId) async {
     final db = await database;
     await db.delete('groupOrder', where: 'group_id = ?', whereArgs: [groupId]);
+  }
+
+  bool pastListOrdersContainsCurrentLists(
+    List<String> currentListIds,
+    List<ListOrder> pastListOrders,
+  ) {
+    if (pastListOrders.length != currentListIds.length) {
+      return false;
+    }
+
+    for (var pastListOrder in pastListOrders) {
+      if (!currentListIds.contains(pastListOrder.listId.toString())) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  Future<void> clearListOrdersForLegacyLists(
+    List<String> currentListIds,
+  ) async {
+    final db = await database;
+
+    // Delete records from listOrder where the list_id is not in the currentListIds
+    await db.delete(
+      'listOrder',
+      where: 'list_id NOT IN (${currentListIds.map((_) => '?').join(', ')})',
+      whereArgs: currentListIds,
+    );
+  }
+
+  Future<List<ListOrder>> getListOrders() async {
+    final db = await database;
+    final List<Map<String, dynamic>> mapsRaw = await db.query('listOrder');
+
+    final maps = List<Map<String, dynamic>>.from(mapsRaw);
+
+    // sort by last_updated
+    maps.sort((a, b) => a['last_updated'].compareTo(b['last_updated']));
+
+    return List.generate(maps.length, (i) {
+      return ListOrder.fromMap(maps[i]);
+    });
+  }
+
+  Future<void> insertListOrder(List<Map<String, dynamic>> listOrders) async {
+    final db = await database;
+
+    final batch = db.batch();
+
+    for (final listOrder in listOrders) {
+      final listId = listOrder['list_id'];
+      final lastUpdated = listOrder['last_updated'];
+
+      // Check if the record already exists
+      final existingRecords = await db.query(
+        'listOrder',
+        where: 'list_id = ?',
+        whereArgs: [listId],
+      );
+
+      if (existingRecords.isNotEmpty) {
+        // Pass, as we don't want to insert duplicates.
+      } else {
+        // Insert a new record
+        batch.insert('listOrder', {
+          'list_id': listId,
+          'last_updated': lastUpdated,
+        });
+      }
+    }
+    await batch.commit(noResult: true);
+  }
+
+  Future<void> updateListOrder(String listId, DateTime lastUpdated) async {
+    final db = await database;
+
+    // Check if the record already exists
+    final existingRecords = await db.query(
+      'listOrder',
+      where: 'list_id = ?',
+      whereArgs: [listId],
+    );
+
+    if (existingRecords.isNotEmpty) {
+      // Update the existing record
+      await db.update(
+        'listOrder',
+        {'last_updated': lastUpdated.toIso8601String()},
+        where: 'list_id = ?',
+        whereArgs: [listId],
+      );
+    } else {
+      // Insert a new record
+      await db.insert('listOrder', {
+        'list_id': listId,
+        'last_updated': lastUpdated.toIso8601String(),
+      });
+    }
+  }
+
+  Future<void> deleteListOrder(String listId) async {
+    final db = await database;
+    await db.delete('listOrder', where: 'list_id = ?', whereArgs: [listId]);
   }
 }
