@@ -231,4 +231,28 @@ class SupabaseHelperGrocery {
       return null;
     }
   }
+
+  Future<List<String>?> getLinkedGroceryListIdsForGroupId(
+    String groupId,
+  ) async {
+    try {
+      final response = await _client
+          .from("grocery_list")
+          .select("id")
+          .eq("group_id", groupId);
+
+      if (response.isEmpty) {
+        return [];
+      }
+
+      return response.map<String>((row) => row["id"]).toList();
+    } on Exception catch (e) {
+      SupabaseHelper.logging.logEvent(
+        type: "error",
+        location: "supabase_helper_grocery.dart:223",
+        content: "Error getting linked grocery lists grocery: $e",
+      );
+      return null;
+    }
+  }
 }

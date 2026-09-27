@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:rankmyroast/classes/modals/grocery.dart';
 import 'package:rankmyroast/classes/modals/grocery_list.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/list_order.dart';
@@ -194,14 +193,11 @@ class _GroceryViewState extends State<GroceryView> {
                             itemCount: grocery.length,
                             itemBuilder: (context, index) {
                               final list = grocery[index];
-                              return GestureDetector(
-                                onTap: () async {},
-                                child: GroceryListGridTileWidget(
-                                  groceryList: list,
-                                  refreshCallback: () => _refreshData(),
-                                  openedCallback:
-                                      () => _updateListOrder(list.id),
-                                ),
+                              return GroceryListGridTileWidget(
+                                groceryList: list,
+                                refreshCallback: () => _refreshData(),
+                                openedCallback:
+                                    () => _updateListOrder(list.id),
                               );
                             },
                           ),

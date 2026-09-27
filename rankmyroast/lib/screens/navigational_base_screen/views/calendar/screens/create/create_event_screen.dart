@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rankmyroast/classes/extra/create_event_extra.dart';
 import 'package:rankmyroast/classes/extra/select_recipe_extra.dart';
 import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
+import 'package:rankmyroast/classes/modals/grocery.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
 import 'package:rankmyroast/classes/modals/schedule.dart';
@@ -31,6 +32,7 @@ class _CreateEventScreenState extends State<CreateEventScreen>
   Recipe? _selectedRecipe;
   Group? _selectedGroup;
   String? _imageUrl;
+  bool _addIngredientsToGroceryList = false;
 
   Future<List<Recipe>?>? _recipesFuture;
   late final Future<List<Group>?> _groupsFuture;
@@ -362,6 +364,41 @@ class _CreateEventScreenState extends State<CreateEventScreen>
                                     },
                                   ),
                                 ],
+
+                                if (_selectedRecipe != null) ...[
+                                  SizedBox(height: 14.h),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: Colors.black),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8.w,
+                                      vertical: 2.h,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Checkbox(
+                                          value: _addIngredientsToGroceryList,
+                                          activeColor: Colors.green,
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              _addIngredientsToGroceryList =
+                                                  value ?? false;
+                                            });
+                                          },
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            'Add ingredients to linked lists',
+                                            style: TextStyle(fontSize: 14.sp),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                           );
@@ -511,6 +548,10 @@ class _CreateEventScreenState extends State<CreateEventScreen>
     }
 
     if (success == true) {
+      _addIngredientsToGroceryListForEvent(groupId, _selectedRecipe!);
+    }
+
+    if (success == true) {
       showSuccessSnackbar(context, 'Event saved successfully!');
     } else {
       showSnackbar(context, 'Failed to save event. Please try again.');
@@ -542,6 +583,33 @@ class _CreateEventScreenState extends State<CreateEventScreen>
 
   Future<List<Recipe>?> _getRecipes(final String groupId) {
     return SupabaseHelper.recipe.getRecipesByGroupId(groupId);
+  }
+
+  Future<bool?> _addIngredientsToGroceryListForEvent(
+    String groupId,
+    Recipe recipe,
+  ) async {
+    final groceryItems = recipe.groceriesList;
+    final linkedGroceryLists = await SupabaseHelper.grocery
+        .getLinkedGroceryListIdsForGroupId(groupId);
+
+    if (linkedGroceryLists == null) return false;
+
+    final groceriesBulk =
+        linkedGroceryLists
+            .expand(
+              (groceryListId) => groceryItems.map(
+                (groceryItem) => Grocery(
+                  id: -1,
+                  item: groceryItem,
+                  completed: false,
+                  groceryListId: groceryListId,
+                ),
+              ),
+            )
+            .toList();
+
+    return SupabaseHelper.grocery.insertGroceryBulk(groceriesBulk);
   }
 
   Future<bool?> _createScheduledEvent(
