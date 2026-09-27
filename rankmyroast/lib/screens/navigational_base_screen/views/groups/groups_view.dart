@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
-import 'package:rankmyroast/classes/modals/group_order.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/groups/widgets/group_tile_widget.dart';
 import 'package:rankmyroast/services/sqlite_helper.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
@@ -204,6 +203,7 @@ class _GroupsViewState extends State<GroupsView> {
                 return Expanded(
                   child: SizedBox(
                     child: ReorderableListView.builder(
+                      buildDefaultDragHandles: false,
                       onReorder: (oldIndex, newIndex) {
                         if (newIndex > oldIndex) newIndex -= 1;
                         final movedRecipe = groups.removeAt(oldIndex);
@@ -217,17 +217,11 @@ class _GroupsViewState extends State<GroupsView> {
                         // Pull the single source of truth from your synchronized local list
                         final currentGroup = groups.elementAt(index);
 
-                        return ReorderableDragStartListener(
-                          index: index,
-                          // Add the key here to satisfy ReorderableDragStartListener requirements...
+                        return GroupTileWidget(
                           key: ValueKey(currentGroup.id),
-                          child: GroupTileWidget(
-                            // CRITICAL FIX: Put the same key explicitly on your custom widget,
-                            // and pass the group data from the synchronized 'groups' list, NOT the snapshot.
-                            key: ValueKey(currentGroup.id),
-                            group: currentGroup,
-                            editGroupCallback: editGroupCallback,
-                          ),
+                          index: index,
+                          group: currentGroup,
+                          editGroupCallback: editGroupCallback,
                         );
                       },
                     ),

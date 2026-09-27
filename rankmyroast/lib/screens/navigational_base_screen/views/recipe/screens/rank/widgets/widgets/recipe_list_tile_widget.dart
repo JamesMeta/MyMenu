@@ -12,7 +12,7 @@ class RecipeListTileWidget extends StatelessWidget {
   final bool isEdit;
   final bool isGroupRatingTile;
   final bool isUsingRatings;
-
+  final int? dragIndex;
   final void Function(Recipe recipe)? removeValueFromList;
 
   const RecipeListTileWidget({
@@ -22,218 +22,378 @@ class RecipeListTileWidget extends StatelessWidget {
     required this.groupRanking,
     this.isEdit = false,
     this.isGroupRatingTile = false,
-    this.removeValueFromList,
     this.isUsingRatings = false,
+    this.dragIndex,
+    this.removeValueFromList,
   });
 
   @override
   Widget build(BuildContext context) {
-    final recipeImageUrl = recipe.publicImageUrl;
+    final String? recipeImageUrl = recipe.publicImageUrl;
+    final int? userRankingInt = int.tryParse(userRanking);
+    final int? groupRankingInt = int.tryParse(groupRanking);
+    final int totalMinutes = (recipe.prepTime ?? 0) + (recipe.cookTime ?? 0);
 
-    final userRankingInt = int.tryParse(userRanking) ?? 0;
-    final groupRankingInt = int.tryParse(groupRanking) ?? 0;
-
-    var difference = userRankingInt - groupRankingInt;
-
-    if (isUsingRatings) {
-      difference = difference * -1;
+    int? difference;
+    if (userRankingInt != null && groupRankingInt != null) {
+      difference = userRankingInt - groupRankingInt;
+      if (isUsingRatings) {
+        difference = difference * -1;
+      }
     }
 
-    return Stack(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey[600]!),
-              color:
-                  isEdit
-                      ? const Color.fromARGB(255, 102, 199, 105)
-                      : isGroupRatingTile
-                      ? const Color.fromARGB(255, 37, 87, 39)
-                      : Colors.green,
-              boxShadow: [BoxShadow(color: Colors.grey)],
+    final String displayRank = isGroupRatingTile ? groupRanking : userRanking;
+    final int? rankNumber = int.tryParse(displayRank);
+
+    final Color badgeBg;
+    final Color badgeBorder;
+    final Color badgeText;
+
+    if (rankNumber == 1 && !isUsingRatings) {
+      badgeBg = const Color(0xFFFFF9E6);
+      badgeBorder = const Color(0xFFFFE082);
+      badgeText = const Color(0xFFB78103);
+    } else if (displayRank == "N/A") {
+      badgeBg = Colors.grey.shade100;
+      badgeBorder = Colors.grey.shade300;
+      badgeText = Colors.grey.shade600;
+    } else {
+      badgeBg = Colors.green.shade50;
+      badgeBorder = Colors.green.shade100;
+      badgeText = Colors.green.shade800;
+    }
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade200, width: 1.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Large Custom Leading Image
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey[600]!, width: 1.5),
-                    ),
-                    width: 90,
-                    height: 90,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child:
-                          recipeImageUrl != null
-                              ? CachedNetworkImage(
-                                httpHeaders: {
-                                  'Authorization':
-                                      'Bearer ${Supabase.instance.client.auth.currentSession?.accessToken}',
-                                },
-                                imageUrl: recipeImageUrl,
-                                fit: BoxFit.cover,
-                                placeholder:
-                                    (context, url) => const Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                errorWidget:
-                                    (context, url, error) =>
-                                        const Icon(Icons.error),
-                              )
-                              : Image.asset(
-                                "assets/images/rankmyroast_icon4.png",
-                                fit: BoxFit.cover,
-                              ),
-                    ),
-                  ),
-                  const SizedBox(width: 16), // Spacing between image and text
-                  // Title area expands to take up remaining space
-                  Expanded(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          flex: isGroupRatingTile ? 8 : 10,
-                          child: Text(
-                            recipe.name,
-                            maxLines: 2,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              overflow: TextOverflow.ellipsis,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(width: 8),
-                        // Trailing ranking
-                        Flexible(
-                          flex: isGroupRatingTile ? 5 : 4,
-                          fit: FlexFit.loose,
-                          child: Center(
-                            child: Column(
-                              children: [
-                                Text(
-                                  isUsingRatings ? "Rating" : "Ranking",
-
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    overflow: TextOverflow.ellipsis,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 8,
-                                    horizontal: isGroupRatingTile ? 4 : 14,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black),
-                                    borderRadius: BorderRadius.circular(8),
-                                    color:
-                                        isGroupRatingTile
-                                            ? Colors.grey[800]
-                                            : Colors.white,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        isGroupRatingTile
-                                            ? groupRanking
-                                            : userRanking,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 14.sp,
-                                          overflow: TextOverflow.ellipsis,
-                                          fontWeight: FontWeight.bold,
-                                          color:
-                                              isGroupRatingTile
-                                                  ? Colors.white
-                                                  : Colors.black,
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: EdgeInsets.all(10.w),
+            child: Row(
+              children: [
+                // Thumbnail with optional remove button in edit mode
+                Stack(
+                  children: [
+                    Container(
+                      width: 72.w,
+                      height: 72.w,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.grey.shade100,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child:
+                            recipeImageUrl != null
+                                ? CachedNetworkImage(
+                                  httpHeaders: {
+                                    'Authorization':
+                                        'Bearer ${Supabase.instance.client.auth.currentSession?.accessToken}',
+                                  },
+                                  imageUrl: recipeImageUrl,
+                                  fit: BoxFit.cover,
+                                  placeholder:
+                                      (context, url) => Center(
+                                        child: SizedBox(
+                                          width: 20.w,
+                                          height: 20.w,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2.0,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.green,
+                                                ),
+                                          ),
                                         ),
                                       ),
-
-                                      if (isGroupRatingTile) ...[
-                                        if (difference == 0)
-                                          Icon(
-                                            CupertinoIcons.equal,
-                                            color: Colors.white,
-                                          )
-                                        else if (difference >= 0)
-                                          Icon(
-                                            Icons.arrow_upward,
-                                            color: Colors.green,
-                                          )
-                                        else
-                                          Icon(
-                                            Icons.arrow_downward,
-                                            color: Colors.red,
+                                  errorWidget:
+                                      (context, url, error) => Icon(
+                                        Icons.restaurant_rounded,
+                                        color: Colors.grey.shade400,
+                                        size: 26.sp,
+                                      ),
+                                )
+                                : Container(
+                                  color: Colors.green.shade50,
+                                  child: Center(
+                                    child: Image.asset(
+                                      "assets/images/rankmyroast_icon4.png",
+                                      width: 44.w,
+                                      height: 44.w,
+                                      fit: BoxFit.contain,
+                                      errorBuilder:
+                                          (context, error, stackTrace) => Icon(
+                                            Icons.restaurant_menu_rounded,
+                                            color: Colors.green.shade700,
+                                            size: 26.sp,
                                           ),
-                                        Text(
-                                          difference.abs().toString(),
-                                          style: TextStyle(
-                                            fontSize: 14.sp,
-                                            overflow: TextOverflow.ellipsis,
-                                            color:
-                                                difference == 0
-                                                    ? Colors.white
-                                                    : difference > 0
-                                                    ? Colors.green
-                                                    : Colors.red,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ],
+                                    ),
                                   ),
+                                ),
+                      ),
+                    ),
+                    if (isEdit && removeValueFromList != null)
+                      Positioned(
+                        top: 3.w,
+                        left: 3.w,
+                        child: GestureDetector(
+                          onTap: () => removeValueFromList!(recipe),
+                          child: Container(
+                            padding: EdgeInsets.all(3.w),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade600,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.25),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 1),
                                 ),
                               ],
                             ),
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 13.sp,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                      ],
+                      ),
+                  ],
+                ),
+                SizedBox(width: 12.w),
+
+                // Title and Meta Info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        recipe.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade900,
+                          height: 1.2,
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      if (totalMinutes > 0)
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.schedule_rounded,
+                              size: 12.sp,
+                              color: Colors.grey.shade500,
+                            ),
+                            SizedBox(width: 3.w),
+                            Text(
+                              "$totalMinutes min",
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                color: Colors.grey.shade600,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            if (recipe.ingredientList.isNotEmpty) ...[
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 5.w),
+                                child: Text(
+                                  "•",
+                                  style: TextStyle(
+                                    color: Colors.grey.shade400,
+                                    fontSize: 11.sp,
+                                  ),
+                                ),
+                              ),
+                              Icon(
+                                Icons.local_dining_outlined,
+                                size: 12.sp,
+                                color: Colors.green.shade700,
+                              ),
+                              SizedBox(width: 3.w),
+                              Flexible(
+                                child: Text(
+                                  "${recipe.ingredientList.length} ingr.",
+                                  style: TextStyle(
+                                    fontSize: 11.sp,
+                                    color: Colors.green.shade700,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ],
+                        )
+                      else if (recipe.ingredientList.isNotEmpty)
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.local_dining_outlined,
+                              size: 12.sp,
+                              color: Colors.green.shade700,
+                            ),
+                            SizedBox(width: 3.w),
+                            Flexible(
+                              child: Text(
+                                "${recipe.ingredientList.length} ingredients",
+                                style: TextStyle(
+                                  fontSize: 11.sp,
+                                  color: Colors.grey.shade600,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        )
+                      else
+                        Text(
+                          isGroupRatingTile
+                              ? (isUsingRatings
+                                  ? "Group Rating"
+                                  : "Group Ranking")
+                              : (isUsingRatings
+                                  ? "Your Rating"
+                                  : "Your Ranking"),
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            color: Colors.grey.shade500,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 8.w),
+
+                // Stat / Ranking Badge
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      isUsingRatings ? "RATING" : "RANK",
+                      style: TextStyle(
+                        fontSize: 9.sp,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.grey.shade500,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    SizedBox(height: 3.h),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isGroupRatingTile ? 8.w : 12.w,
+                        vertical: 5.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: badgeBg,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: badgeBorder, width: 1),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (rankNumber == 1 && !isUsingRatings) ...[
+                            Icon(
+                              Icons.emoji_events_rounded,
+                              color: const Color(0xFFE6A700),
+                              size: 14.sp,
+                            ),
+                            SizedBox(width: 3.w),
+                          ],
+                          Text(
+                            displayRank,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.bold,
+                              color: badgeText,
+                            ),
+                          ),
+                          if (isGroupRatingTile && difference != null) ...[
+                            SizedBox(width: 4.w),
+                            if (difference == 0)
+                              Icon(
+                                CupertinoIcons.equal,
+                                color: Colors.grey.shade600,
+                                size: 12.sp,
+                              )
+                            else if (difference > 0)
+                              Icon(
+                                Icons.arrow_upward_rounded,
+                                color: Colors.green.shade700,
+                                size: 13.sp,
+                              )
+                            else
+                              Icon(
+                                Icons.arrow_downward_rounded,
+                                color: Colors.red.shade700,
+                                size: 13.sp,
+                              ),
+                            Text(
+                              difference.abs().toString(),
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.bold,
+                                color:
+                                    difference == 0
+                                        ? Colors.grey.shade600
+                                        : difference > 0
+                                        ? Colors.green.shade700
+                                        : Colors.red.shade700,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Drag Handle (only shown during edit/reorder)
+                if (isEdit && dragIndex != null) ...[
+                  SizedBox(width: 4.w),
+                  ReorderableDragStartListener(
+                    index: dragIndex!,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 4.w,
+                        vertical: 6.h,
+                      ),
+                      child: Icon(
+                        Icons.drag_indicator_rounded,
+                        color: Colors.grey.shade400,
+                        size: 22.sp,
+                      ),
                     ),
                   ),
                 ],
-              ),
+              ],
             ),
           ),
         ),
-        if (isEdit) ...[
-          Positioned(
-            left: 8.w,
-            top: 8.h,
-            child: IconButton(
-              onPressed: () {
-                removeValueFromList!(recipe);
-              },
-              icon: Icon(
-                Icons.close_rounded,
-
-                color: const Color.fromARGB(189, 255, 255, 255),
-              ),
-              style: IconButton.styleFrom(
-                backgroundColor: const Color.fromARGB(187, 70, 70, 70),
-              ),
-
-              constraints: BoxConstraints(maxHeight: 40, maxWidth: 40),
-            ),
-          ),
-        ],
-      ],
+      ),
     );
   }
 }
+
