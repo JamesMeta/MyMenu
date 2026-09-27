@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:rankmyroast/classes/extra/create_recipe_extra.dart';
 import 'package:rankmyroast/classes/extra/view_recipe_extra.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
-import 'package:rankmyroast/classes/modals/group_order.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/widgets/recipe_tile_widget.dart';
 import 'package:rankmyroast/services/sqlite_helper.dart';
@@ -177,38 +176,6 @@ class _RecipeViewState extends State<RecipeView> {
                 final groups = snapshot.data;
 
                 if (groups != null && groups.isNotEmpty) {
-                  // late final List<Group> newGroups;
-                  // final sqliteHelper = SqliteHelper();
-
-                  // if (sqliteHelper.pastGroupsContainsCurrentGroups(
-                  //   groups,
-                  //   _groupOrders,
-                  // )) {
-                  //   newGroups =
-                  //       _groupOrders
-                  //           .map(
-                  //             (order) => groups.firstWhere(
-                  //               (group) => group.id == order.groupId,
-                  //             ),
-                  //           )
-                  //           .toList();
-                  // } else {
-                  //   newGroups =
-                  //       _groupOrders
-                  //           .map(
-                  //             (order) => groups.firstWhere(
-                  //               (group) => group.id == order.groupId,
-                  //             ),
-                  //           )
-                  //           .toList();
-                  //   newGroups.addAll(
-                  //     groups.where((group) => !newGroups.contains(group)),
-                  //   );
-                  // }
-
-                  // _selectedGroup = newGroups.first;
-                  // _recipes = _selectedGroup!.recipes;
-
                   return SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -278,14 +245,15 @@ class _RecipeViewState extends State<RecipeView> {
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: crossAxisCount,
-                                  childAspectRatio: 0.95,
-                                  mainAxisSpacing: 16,
-                                  crossAxisSpacing: 16,
+                                  childAspectRatio: 0.85,
+                                  mainAxisSpacing: 14,
+                                  crossAxisSpacing: 14,
                                 ),
                             itemCount: _recipes.length,
                             itemBuilder: (context, index) {
                               final recipe = _recipes[index];
-                              return GestureDetector(
+                              return RecipeTileWidget(
+                                recipe: recipe,
                                 onTap: () async {
                                   final response = await context.push(
                                     "/base/view-recipe",
@@ -302,7 +270,6 @@ class _RecipeViewState extends State<RecipeView> {
                                     _refreshData();
                                   }
                                 },
-                                child: RecipeTileWidget(recipe: recipe),
                               );
                             },
                           ),

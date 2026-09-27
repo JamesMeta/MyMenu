@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rankmyroast/common_widgets/confirmation_dialog_widget.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/schedule_view.dart';
+import 'package:rankmyroast/screens/navigational_base_screen/views/grocery/grocery_view.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/groups/groups_view.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/home/home_view.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/recipe_view.dart';
@@ -23,12 +24,14 @@ class NavigationalBaseScreen extends StatefulWidget {
 }
 
 class _NavigationalBaseScreenState extends State<NavigationalBaseScreen> {
-  int navigationalIndex = 1;
+  int navigationalIndex = 2;
 
   final List<Widget> navigationalViews = [
     ScheduleView(),
-    HomeView(),
+
     GroupsView(),
+    HomeView(),
+    GroceryView(),
     RecipeView(),
   ];
 
@@ -86,14 +89,22 @@ class _NavigationalBaseScreenState extends State<NavigationalBaseScreen> {
             ),
 
             NavigationDestination(
+              icon: Icon(Icons.group_outlined, size: UNSELECTED_ICON_SIZE),
+              selectedIcon: Icon(Icons.group, size: SELECTED_ICON_SIZE),
+              label: 'Group',
+            ),
+            NavigationDestination(
               icon: Icon(Icons.home_outlined, size: UNSELECTED_ICON_SIZE),
               selectedIcon: Icon(Icons.home, size: SELECTED_ICON_SIZE),
               label: 'Home',
             ),
             NavigationDestination(
-              icon: Icon(Icons.group_outlined, size: UNSELECTED_ICON_SIZE),
-              selectedIcon: Icon(Icons.group, size: SELECTED_ICON_SIZE),
-              label: 'Group',
+              icon: Icon(
+                Icons.shopping_cart_outlined,
+                size: UNSELECTED_ICON_SIZE,
+              ),
+              selectedIcon: Icon(Icons.shopping_cart, size: SELECTED_ICON_SIZE),
+              label: 'Grocery',
             ),
             NavigationDestination(
               icon: Icon(Icons.kitchen_outlined, size: UNSELECTED_ICON_SIZE),

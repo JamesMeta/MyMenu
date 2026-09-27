@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:rankmyroast/classes/extra/select_recipe_extra.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/screens/create/screens/widgets/select_recipe_tile_widget.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/widgets/recipe_tile_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SelectRecipeScreen extends StatefulWidget {
@@ -62,18 +61,18 @@ class _SelectRecipeScreenState extends State<SelectRecipeScreen> {
 
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: crossAxisCount,
-                    childAspectRatio: 0.95,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
+                    childAspectRatio: 0.85,
+                    mainAxisSpacing: 14,
+                    crossAxisSpacing: 14,
                   ),
                   itemCount: _recipes.length,
                   itemBuilder: (context, index) {
                     final recipe = _recipes[index];
-                    return GestureDetector(
+                    return SelectRecipeTileWidget(
+                      recipe: recipe,
                       onTap: () async {
                         Navigator.pop(context, recipe);
                       },
-                      child: SelectRecipeTileWidget(recipe: recipe),
                     );
                   },
                 )

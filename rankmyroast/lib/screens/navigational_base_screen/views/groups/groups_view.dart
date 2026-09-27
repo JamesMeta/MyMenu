@@ -75,22 +75,8 @@ class _GroupsViewState extends State<GroupsView> {
                 );
               }
 
-              if (snapshot.hasError) {
-                SupabaseHelper.logging.logEvent(
-                  type: "error",
-                  location: "groups_view.dart:78",
-                  content: "Error fetching groups: ${snapshot.error}",
-                );
-
-                return Text(
-                  "Error fetching groups: ${snapshot.error}",
-                  style: TextStyle(color: Colors.red),
-                );
-              }
-
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return SizedBox();
-              } else {
+              if (!snapshot.hasData ||
+                  snapshot.connectionState == ConnectionState.done) {
                 return Row(
                   children: [
                     Column(
@@ -144,6 +130,17 @@ class _GroupsViewState extends State<GroupsView> {
                       ),
                     ),
                   ],
+                );
+              } else {
+                SupabaseHelper.logging.logEvent(
+                  type: "error",
+                  location: "groups_view.dart:78",
+                  content: "Error fetching groups: ${snapshot.error}",
+                );
+
+                return Text(
+                  "Error fetching groups: ${snapshot.error}",
+                  style: TextStyle(color: Colors.red),
                 );
               }
             },
