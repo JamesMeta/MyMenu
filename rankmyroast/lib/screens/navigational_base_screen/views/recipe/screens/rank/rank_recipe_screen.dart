@@ -195,6 +195,7 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
                 else if (_currentTitleIndex == 2)
                   Expanded(
                     child: ReorderableListView.builder(
+                      buildDefaultDragHandles: false,
                       onReorder: (oldIndex, newIndex) {
                         if (newIndex > oldIndex) newIndex -= 1;
                         final movedRecipe = recipeGroupUserRankingList.removeAt(
@@ -210,15 +211,12 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
                       itemCount: recipeGroupUserRankingList.length,
                       itemBuilder: (context, index) {
                         final recipe = recipeGroupUserRankingList[index].recipe;
-                        return ReorderableDragStartListener(
+                        return RecipeReorderableListTileWidget(
                           key: ValueKey(recipe.id),
+                          recipe: recipe,
+                          ranking: (index + 1).toString(),
                           index: index,
-
-                          child: RecipeReorderableListTileWidget(
-                            recipe: recipe,
-                            ranking: index.toString(),
-                            removeValueFromList: removeValueFromList,
-                          ),
+                          removeValueFromList: removeValueFromList,
                         );
                       },
                     ),
@@ -278,20 +276,32 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 102, 199, 105),
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
                       maximumSize: Size(300.w, 50.h),
                       minimumSize: Size(300.w, 50.h),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(color: Colors.black),
                       ),
                     ),
                     child:
                         _isSubmitting
-                            ? CircularProgressIndicator()
+                            ? SizedBox(
+                              width: 20.w,
+                              height: 20.w,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.0,
+                              ),
+                            )
                             : Text(
                               "Submit",
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                   ),
                 ],
@@ -462,7 +472,8 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
     final counts = <String, int>{};
 
     for (var r in ratings) {
-      final val = r.ranking?.toDouble() ?? 0.0;
+      if (r.ranking == null) continue;
+      final val = r.ranking!.toDouble();
       averages.update(r.recipeId, (curr) => curr + val, ifAbsent: () => val);
       counts.update(r.recipeId, (curr) => curr + 1, ifAbsent: () => 1);
     }
@@ -514,11 +525,11 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
           return RecipeGroupUserRanking(
             userRank:
                 userSortedIds.contains(r.id)
-                    ? userSortedIds.indexOf(r.id).toDouble()
+                    ? (userSortedIds.indexOf(r.id) + 1).toDouble()
                     : double.infinity,
             groupRank:
                 groupSortedIds.contains(r.id)
-                    ? groupSortedIds.indexOf(r.id).toDouble()
+                    ? (groupSortedIds.indexOf(r.id) + 1).toDouble()
                     : double.infinity,
             recipe: r,
           );
@@ -682,14 +693,16 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
             (ranking) => ranking.recipeId == r.recipe.id,
           );
 
-          if (associatedRankingIndex == 0) {
+          final int newRank = newRankings.indexOf(r) + 1;
+
+          if (associatedRankingIndex < 0) {
             return RecipeRating(
               id: null,
               createdAt: DateTime.now().toIso8601String(),
               recipeId: r.recipe.id,
               userId: Supabase.instance.client.auth.currentUser?.id ?? '',
               groupId: _group?.id ?? '',
-              ranking: newRankings.indexOf(r),
+              ranking: newRank,
             );
           }
 
@@ -699,7 +712,7 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
             recipeId: r.recipe.id,
             userId: Supabase.instance.client.auth.currentUser?.id ?? '',
             groupId: _group?.id ?? '',
-            ranking: newRankings.indexOf(r),
+            ranking: newRank,
           );
         }).toList();
 

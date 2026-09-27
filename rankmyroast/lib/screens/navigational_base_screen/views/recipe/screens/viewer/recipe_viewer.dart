@@ -312,8 +312,8 @@ class _RecipeViewerState extends State<RecipeViewer> with SnackbarService {
                                       final counts = <String, int>{};
 
                                       for (var r in ratings) {
-                                        final val =
-                                            r.ranking?.toDouble() ?? 0.0;
+                                        if (r.ranking == null) continue;
+                                        final val = r.ranking!.toDouble();
                                         averages.update(
                                           r.recipeId,
                                           (curr) => curr + val,
