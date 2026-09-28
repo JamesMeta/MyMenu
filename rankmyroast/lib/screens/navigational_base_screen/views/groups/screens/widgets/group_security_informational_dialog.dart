@@ -11,16 +11,37 @@ class GroupSecurityInformationalDialog extends StatelessWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            "Read Only: Can view group recipes but can not rank them or add new ones.",
+          Row(
+            children: [
+              Icon(Icons.person),
+              Expanded(
+                child: Text(
+                  "Customer: Can view your recipes, group calendar events, and give rankings/ratings but can not add their own recipes, events, lists/list items or adjust the group settings.",
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 8),
-          Text(
-            "Read & Write: Can view, rank and create new group recipes but cannot modify existing ones or change group settings and users.",
+          Row(
+            children: [
+              Icon(Icons.group),
+              Expanded(
+                child: Text(
+                  "Employee: Can interact with group linked lists and create their own group recipes and calendar events, but cannot modify existing ones they didn't author or change group settings.",
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 8),
-          Text(
-            "Admin: Full access to view, modify, and manage group data, settings and members.",
+          Row(
+            children: [
+              Icon(Icons.cases),
+              Expanded(
+                child: Text(
+                  "Manager: Full access to view, modify, and manage group data, settings and members as well as create group linked lists.",
+                ),
+              ),
+            ],
           ),
         ],
       ),
