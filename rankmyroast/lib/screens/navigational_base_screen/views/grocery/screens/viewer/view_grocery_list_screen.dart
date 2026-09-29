@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
 import 'package:rankmyroast/classes/modals/grocery.dart';
 import 'package:rankmyroast/classes/modals/grocery_list.dart';
+import 'package:rankmyroast/common_widgets/confirmation_dialog_widget.dart';
 import 'package:rankmyroast/common_widgets/inline_editable_title.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
 
@@ -61,6 +62,38 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
         appBar: AppBar(
           backgroundColor: Colors.green,
           foregroundColor: Colors.white,
+          actions: [
+            IconButton(
+              onPressed: () async {
+                final confirmation = await showDialog(
+                  context: context,
+                  builder:
+                      (context) => ConfirmationDialogWidget(
+                        title: "Delete List?",
+                        content:
+                            "Deleting this list will also delete any items on the list. Are you sure you want to delete this list?",
+                        confirmButtonText: "Delete",
+                        cancelButtonText: "Cancel",
+                        isDestructiveAction: true,
+                      ),
+                );
+
+                if (!confirmation) return;
+
+                final response = await _deleteGroceryList();
+
+                if (response == true) {
+                  if (!context.mounted) return;
+
+                  showSnackbar(context, "List Deleted Successfully");
+
+                  _groceryList!.name = "Deleted List";
+                  context.pop(null);
+                }
+              },
+              icon: Icon(Icons.delete),
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
@@ -197,7 +230,7 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
             }
           });
         },
-        icon: Icon(Icons.delete, color: Colors.grey[600]),
+        icon: Icon(Icons.delete_forever, color: Colors.grey[600]),
       ),
     );
   }
@@ -263,5 +296,9 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
       });
     }
     return response;
+  }
+
+  Future<bool?> _deleteGroceryList() async {
+    return await SupabaseHelper.grocery.deleteGroceryList(_groceryList!.id);
   }
 }

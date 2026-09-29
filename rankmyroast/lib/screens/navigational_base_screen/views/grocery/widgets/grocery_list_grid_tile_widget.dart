@@ -103,9 +103,7 @@ class _GroceryListGridTileWidgetState extends State<GroceryListGridTileWidget> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildHeader(totalCount, completedCount),
-                  Expanded(
-                    child: _buildBody(totalCount, completedCount),
-                  ),
+                  Expanded(child: _buildBody(totalCount, completedCount)),
                 ],
               ),
             ),
@@ -123,11 +121,7 @@ class _GroceryListGridTileWidgetState extends State<GroceryListGridTileWidget> {
       color: Colors.green,
       child: Row(
         children: [
-          Icon(
-            Icons.shopping_bag_outlined,
-            color: Colors.white,
-            size: 15.sp,
-          ),
+          Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 15.sp),
           SizedBox(width: 6.w),
           Expanded(
             child: Text(
@@ -154,9 +148,10 @@ class _GroceryListGridTileWidgetState extends State<GroceryListGridTileWidget> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
               decoration: BoxDecoration(
-                color: isAllDone
-                    ? Colors.white
-                    : Colors.white.withValues(alpha: 0.22),
+                color:
+                    isAllDone
+                        ? Colors.white
+                        : Colors.white.withValues(alpha: 0.22),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -279,9 +274,7 @@ class _GroceryListGridTileWidgetState extends State<GroceryListGridTileWidget> {
       child: Row(
         children: [
           Icon(
-            completed
-                ? Icons.check_circle_rounded
-                : Icons.circle_outlined,
+            completed ? Icons.check_circle_rounded : Icons.circle_outlined,
             size: 13.sp,
             color: completed ? Colors.green : Colors.grey.shade400,
           ),
@@ -304,4 +297,3 @@ class _GroceryListGridTileWidgetState extends State<GroceryListGridTileWidget> {
     );
   }
 }
-
