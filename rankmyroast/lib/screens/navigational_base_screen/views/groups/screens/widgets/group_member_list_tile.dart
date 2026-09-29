@@ -23,12 +23,9 @@ class GroupMemberListTile extends StatefulWidget {
 
 class _GroupMemberListTileState extends State<GroupMemberListTile> {
   Map<int, SecurityLevelToRole> securityLevelToRole = {
-    1: SecurityLevelToRole(text: "Read Only", icon: Icons.visibility_outlined),
-    2: SecurityLevelToRole(text: "Read & Write", icon: Icons.edit_outlined),
-    3: SecurityLevelToRole(
-      text: "Admin",
-      icon: Icons.admin_panel_settings_outlined,
-    ),
+    1: SecurityLevelToRole(text: "Customer", icon: Icons.person_4),
+    2: SecurityLevelToRole(text: "Employee", icon: Icons.groups_2),
+    3: SecurityLevelToRole(text: "Manager", icon: Icons.work),
   };
 
   late Future<bool> isValid;
@@ -98,7 +95,7 @@ class _GroupMemberListTileState extends State<GroupMemberListTile> {
           ),
 
           Expanded(
-            flex: 6,
+            flex: 5,
             child: DropdownMenu(
               // 1. Hide the text by making it transparent so only the leadingIcon shows
               textStyle: const TextStyle(
