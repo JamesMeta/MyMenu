@@ -23,7 +23,7 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
 
   bool _isEditingTitle = false;
 
-  late final String _title;
+  late String _title;
 
   final List<Grocery> _recentlyCompleted = [];
 
@@ -89,6 +89,13 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
 
                   _groceryList!.name = "Deleted List";
                   context.pop(null);
+                } else {
+                  if (!context.mounted) return;
+
+                  showSnackbar(
+                    context,
+                    "Failed to delete list. You may not have permission to manage this list.",
+                  );
                 }
               },
               icon: Icon(Icons.delete),
@@ -293,7 +300,15 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
     if (response == false) {
       setState(() {
         _groceryList.name = oldName;
+        _title = oldName;
       });
+
+      if (mounted) {
+        showSnackbar(
+          context,
+          "Failed to update list name. You may not have permission to manage this list.",
+        );
+      }
     }
     return response;
   }

@@ -241,7 +241,7 @@ class MainApp extends StatelessWidget {
       minTextAdapt: true,
       builder:
           (context, child) => MaterialApp.router(
-            title: 'MenuPlus',
+            title: 'MyMenu',
             routerConfig: _router,
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),

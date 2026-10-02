@@ -412,7 +412,7 @@ class SupabaseHelperGroups {
         }
 
         final permissionLevel = response["permission_level"] as int?;
-        return permissionLevel != null && permissionLevel >= 2;
+        return permissionLevel != null && permissionLevel >= 3;
       } on Exception catch (e) {
         await SupabaseHelper.logging.logEvent(
           type: 'error',
