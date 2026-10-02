@@ -6,80 +6,34 @@ import 'package:rankmyroast/classes/extra/select_recipe_extra.dart';
 import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
 import 'package:rankmyroast/classes/modals/schedule.dart';
+import 'package:rankmyroast/services/supabase_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ViewEventDialogWidget extends StatelessWidget {
+class ViewEventDialogWidget extends StatefulWidget {
   final Schedule event;
 
   const ViewEventDialogWidget({super.key, required this.event});
 
-  String _formatServedAt(String servedAt) {
-    try {
-      final date = DateTime.parse(servedAt).toLocal();
-      final hour = date.hour == 0 || date.hour == 12 ? 12 : date.hour % 12;
-      final minute = date.minute.toString().padLeft(2, '0');
-      final period = date.hour >= 12 ? 'PM' : 'AM';
-      const monthNames = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ];
-      return '${monthNames[date.month - 1]} ${date.day}, ${date.year} • $hour:$minute $period';
-    } catch (_) {
-      return servedAt;
-    }
-  }
+  @override
+  State<ViewEventDialogWidget> createState() => _ViewEventDialogWidgetState();
+}
 
-  Widget _buildInfoTile(
-    IconData icon,
-    String title,
-    String subtitle,
-    Color iconColor,
-  ) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 20, color: iconColor),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: TextStyle(color: Colors.grey[700], fontSize: 14),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+class _ViewEventDialogWidgetState extends State<ViewEventDialogWidget> {
+  late final Future<bool>? _isAdmin;
+
+  @override
+  void initState() {
+    _isAdmin = SupabaseHelper.groups.isUserGroupAdmin(widget.event.group.id);
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final Color primaryGreen = Colors.green;
-    final imageUrl = event.recipe.publicImageUrl;
-    final servedAtText = _formatServedAt(event.servedAt);
+    final imageUrl = widget.event.recipe.publicImageUrl;
+    final servedAtText = _formatServedAt(widget.event.servedAt);
     final bool isOwner =
-        event.userId == Supabase.instance.client.auth.currentUser?.id;
+        widget.event.userId == Supabase.instance.client.auth.currentUser?.id;
 
     return AlertDialog(
       backgroundColor: Colors.white,
@@ -92,7 +46,7 @@ class ViewEventDialogWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            event.recipe.name,
+            widget.event.recipe.name,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
@@ -101,7 +55,7 @@ class ViewEventDialogWidget extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'From ${event.group.name}',
+            'From ${widget.event.group.name}',
             style: TextStyle(fontSize: 14, color: Colors.green[600]),
           ),
           const SizedBox(height: 12),
@@ -161,22 +115,22 @@ class ViewEventDialogWidget extends StatelessWidget {
             _buildInfoTile(
               Icons.restaurant_menu,
               'Recipe',
-              event.recipe.name,
+              widget.event.recipe.name,
               Colors.green[700]!,
             ),
             const SizedBox(height: 16),
             _buildInfoTile(
               Icons.group,
               'Group',
-              event.group.name,
+              widget.event.group.name,
               Colors.green[700]!,
             ),
             const SizedBox(height: 16),
             _buildInfoTile(
               Icons.note,
               'Notes',
-              event.notes != null && event.notes!.isNotEmpty
-                  ? event.notes!
+              widget.event.notes != null && widget.event.notes!.isNotEmpty
+                  ? widget.event.notes!
                   : 'No notes provided.',
               Colors.green[700]!,
             ),
@@ -190,7 +144,7 @@ class ViewEventDialogWidget extends StatelessWidget {
             onPressed: () async {
               final response = await context.push(
                 "/base/create-event",
-                extra: CreateEventExtra(event: event),
+                extra: CreateEventExtra(event: widget.event),
               );
 
               if (response != null && response is bool && response) {
@@ -203,11 +157,105 @@ class ViewEventDialogWidget extends StatelessWidget {
             style: TextButton.styleFrom(foregroundColor: Colors.green[800]),
             child: const Text('Edit'),
           ),
+        if (!isOwner)
+          FutureBuilder(
+            future: _isAdmin,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                );
+              } else if (snapshot.hasData && snapshot.data == true) {
+                return TextButton(
+                  onPressed: () async {
+                    final response = await context.push(
+                      "/base/create-event",
+                      extra: CreateEventExtra(event: widget.event),
+                    );
+
+                    if (response != null && response is bool && response) {
+                      context.pop(true);
+                    } else {
+                      context.pop();
+                    }
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.green[800],
+                  ),
+                  child: const Text('Edit'),
+                );
+              } else {
+                return const SizedBox();
+              }
+            },
+          ),
 
         TextButton(
           onPressed: () => context.pop(),
           style: TextButton.styleFrom(foregroundColor: Colors.green[800]),
           child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+
+  String _formatServedAt(String servedAt) {
+    try {
+      final date = DateTime.parse(servedAt).toLocal();
+      final hour = date.hour == 0 || date.hour == 12 ? 12 : date.hour % 12;
+      final minute = date.minute.toString().padLeft(2, '0');
+      final period = date.hour >= 12 ? 'PM' : 'AM';
+      const monthNames = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
+      return '${monthNames[date.month - 1]} ${date.day}, ${date.year} • $hour:$minute $period';
+    } catch (_) {
+      return servedAt;
+    }
+  }
+
+  Widget _buildInfoTile(
+    IconData icon,
+    String title,
+    String subtitle,
+    Color iconColor,
+  ) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 20, color: iconColor),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+              ),
+            ],
+          ),
         ),
       ],
     );

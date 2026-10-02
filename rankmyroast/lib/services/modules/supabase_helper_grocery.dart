@@ -255,4 +255,31 @@ class SupabaseHelperGrocery {
       return null;
     }
   }
+
+  Future<bool?> deleteGroceryList(String listId) async {
+    try {
+      await _client.from("grocery_list").delete().eq("id", listId);
+
+      final response =
+          await _client
+              .from("grocery_list")
+              .select("id")
+              .eq("id", listId)
+              .limit(1)
+              .maybeSingle();
+
+      if (response == null || response.isEmpty) {
+        return true;
+      } else {
+        return false;
+      }
+    } on Exception catch (e) {
+      SupabaseHelper.logging.logEvent(
+        type: "error",
+        location: "supabase_helper_grocery.dart:235",
+        content: "Error deleting grocery list: $e",
+      );
+      return null;
+    }
+  }
 }
