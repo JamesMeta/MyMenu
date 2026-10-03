@@ -113,7 +113,7 @@ class _CreateEventScreenState extends State<CreateEventScreen>
                   } else {
                     showSnackbar(
                       context,
-                      'Failed to delete event. Please try again.',
+                      'Failed to delete event. You may have insufficient permissions.',
                     );
                   }
                 }
@@ -558,7 +558,10 @@ class _CreateEventScreenState extends State<CreateEventScreen>
     if (success == true) {
       showSuccessSnackbar(context, 'Event saved successfully!');
     } else {
-      showSnackbar(context, 'Failed to save event. Please try again.');
+      showSnackbar(
+        context,
+        'Failed to save event. You may have insufficient permissions.',
+      );
     }
     return success == true;
   }

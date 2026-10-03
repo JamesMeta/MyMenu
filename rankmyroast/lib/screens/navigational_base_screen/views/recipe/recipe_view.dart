@@ -252,6 +252,7 @@ class _RecipeViewState extends State<RecipeView> {
                     ),
                   );
                 } else if (groups != null && groups.isEmpty) {
+                  _createPersonalGroup();
                   return Center(child: Text("No groups found"));
                 } else {
                   return Center(child: Text("The Data is null"));
@@ -521,5 +522,10 @@ class _RecipeViewState extends State<RecipeView> {
     } on Exception {
       _selectedGroup = null;
     }
+  }
+
+  Future<void> _createPersonalGroup() async {
+    await SupabaseHelper.groups.createPersonalGroup();
+    _refreshData();
   }
 }

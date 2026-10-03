@@ -543,7 +543,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen>
       if (mounted && response.localError != null) {
         showSnackbar(
           context,
-          response.errorMessage ?? "Failed to update group",
+          response.errorMessage ??
+              "Failed to update group. You may have insufficient permissions.",
         );
       }
       return false;
@@ -655,7 +656,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen>
       return true;
     } else {
       if (mounted) {
-        showErrorSnackbar(context, "Failed to delete group");
+        showErrorSnackbar(
+          context,
+          "Failed to delete group. You may have insufficient permissions.",
+        );
       }
       return false;
     }

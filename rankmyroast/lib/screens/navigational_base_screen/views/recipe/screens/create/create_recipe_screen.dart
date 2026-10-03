@@ -250,12 +250,11 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          SizedBox(
-                            width: 128.w,
-                            height: 128.w,
+                          AspectRatio(
+                            aspectRatio: 4 / 3,
                             child: ImageContentWidget(
                               recipeImage: _recipeImageFile,
                               updateRecipeImage: _updateRecipeImage,
@@ -264,56 +263,44 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen>
                               recipeImageUrl: _recipeToEditImageUrl,
                             ),
                           ),
-                          Expanded(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 4,
+                          SizedBox(height: 16),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Container(
+                              height: 42.h,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey[600]!),
+                                borderRadius: BorderRadius.circular(12),
+                                color: Colors.white,
+                              ),
+                              child: TextField(
+                                controller: _recipeNameController,
+                                onChanged:
+                                    (value) =>
+                                        _recipeNameController.text.isNotEmpty
+                                            ? setState(() {
+                                              _canSubmit = true;
+                                            })
+                                            : setState(() {
+                                              _canSubmit = false;
+                                            }),
+                                decoration: InputDecoration(
+                                  labelText: "Recipe Name",
+                                  labelStyle: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.grey[600],
                                   ),
-                                  child: Container(
-                                    height: 42.h,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: Colors.grey[600]!,
-                                      ),
-                                      borderRadius: BorderRadius.circular(12),
-                                      color: Colors.white,
-                                    ),
-                                    child: TextField(
-                                      controller: _recipeNameController,
-                                      onChanged:
-                                          (value) =>
-                                              _recipeNameController
-                                                      .text
-                                                      .isNotEmpty
-                                                  ? setState(() {
-                                                    _canSubmit = true;
-                                                  })
-                                                  : setState(() {
-                                                    _canSubmit = false;
-                                                  }),
-                                      decoration: InputDecoration(
-                                        labelText: "Recipe Name",
-                                        labelStyle: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.grey[600],
-                                        ),
-                                        floatingLabelBehavior:
-                                            FloatingLabelBehavior.never,
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.never,
 
-                                        isCollapsed: true,
-                                        contentPadding: EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                        ),
-                                        border: InputBorder.none,
-                                      ),
-                                    ),
+                                  isCollapsed: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12,
                                   ),
+                                  border: InputBorder.none,
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ],
@@ -573,8 +560,11 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen>
       final failedImage = response.failedToUploadImage;
 
       if (failedGroups != null) {
-        if (failedGroups.isNotEmpty) {
-          showSnackbar(context, "Failed to add recipe to groups.");
+        for (final group in failedGroups) {
+          showSnackbar(
+            context,
+            "Insufficient privileges to add recipe to ${group.name}",
+          );
         }
       }
 
