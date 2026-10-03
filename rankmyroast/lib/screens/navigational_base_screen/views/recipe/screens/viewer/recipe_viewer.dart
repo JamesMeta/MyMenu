@@ -34,6 +34,7 @@ class _RecipeViewerState extends State<RecipeViewer> with SnackbarService {
   late final Group? _group;
   late final List<Group>? _userGroups;
   late final String? _recipeImageUrl;
+  late final bool _gradeVisible;
 
   late final Future<List<RecipeRating>?> _ratings;
 
@@ -46,6 +47,7 @@ class _RecipeViewerState extends State<RecipeViewer> with SnackbarService {
     _recipeImageUrl = _recipe.publicImageUrl;
     _group = widget.group;
     _userGroups = widget.userGroups;
+    _gradeVisible = _group?.gradeVisible ?? false;
 
     _isOwner = _recipe.userId == Supabase.instance.client.auth.currentUser!.id;
 
@@ -93,7 +95,7 @@ class _RecipeViewerState extends State<RecipeViewer> with SnackbarService {
             future: SupabaseHelper.groups.isUserGroupAdmin(_group!.id),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                if (snapshot.data == true) {
+                if (snapshot.data == true || _isOwner) {
                   return IconButton(
                     onPressed: () async {
                       final confirmDelete = await showDialog<bool>(
@@ -115,7 +117,7 @@ class _RecipeViewerState extends State<RecipeViewer> with SnackbarService {
                         if (deleteResponse == true) {
                           if (context.mounted) {
                             showSnackbar(context, "Recipe removed from group");
-                            context.pop();
+                            context.pop(true);
                           }
                         } else {
                           if (context.mounted) {
