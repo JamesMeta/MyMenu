@@ -249,6 +249,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SnackbarService {
         showSuccessSnackbar(context, 'Username changed successfully!');
         return true;
       } else {
+        showSnackbar(context, 'Username is already taken.');
         return false;
       }
     } catch (e) {
