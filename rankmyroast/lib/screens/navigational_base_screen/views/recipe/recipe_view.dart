@@ -96,7 +96,51 @@ class _RecipeViewState extends State<RecipeView> {
               }
 
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return SizedBox();
+                return Row(
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Recipes",
+                          style: TextStyle(
+                            fontSize: 28.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          "No recipes",
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Expanded(child: SizedBox()),
+                    IconButton(
+                      onPressed: () async {
+                        final refresh = _navigateToCreateRecipeScreen([], null);
+                        if (await refresh) {
+                          _refreshRecipesForSelectedGroup();
+                        }
+                      },
+                      constraints: BoxConstraints(
+                        minWidth: 40.w,
+                        minHeight: 40.w,
+                      ),
+                      icon: Icon(Icons.add, color: Colors.white, size: 22.sp),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          side: BorderSide(color: Colors.transparent, width: 1),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
               } else {
                 final groups = snapshot.data ?? [];
 
@@ -301,8 +345,43 @@ class _RecipeViewState extends State<RecipeView> {
                                   // so the entire screen is "pullable"
                                   height:
                                       MediaQuery.of(context).size.height * 0.5,
-                                  child: const Center(
-                                    child: Text("No recipes found"),
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "No recipes found for this group.",
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                        SizedBox(height: 8),
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            final refresh =
+                                                _navigateToCreateRecipeScreen(
+                                                  groups,
+                                                  null,
+                                                );
+                                            if (await refresh) {
+                                              _refreshRecipesForSelectedGroup();
+                                            }
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.green,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            "Create a new recipe",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],
@@ -396,11 +475,12 @@ class _RecipeViewState extends State<RecipeView> {
       }
     });
 
-    try {
+    if (await _groupsList != null && (await _groupsList)!.isNotEmpty) {
       _selectedGroup = (await _groupsList)?.first;
       _recipes = _selectedGroup?.recipes ?? [];
-    } on Exception {
+    } else {
       _selectedGroup = null;
+      _recipes = [];
     }
   }
 
