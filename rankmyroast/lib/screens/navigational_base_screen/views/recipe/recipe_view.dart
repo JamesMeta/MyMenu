@@ -125,7 +125,13 @@ class _RecipeViewState extends State<RecipeView> {
                     Expanded(child: SizedBox()),
                     IconButton(
                       onPressed: () async {
-                        _navigateToCreateRecipeScreen(groups, null);
+                        final refresh = _navigateToCreateRecipeScreen(
+                          groups,
+                          null,
+                        );
+                        if (await refresh) {
+                          _refreshRecipesForSelectedGroup();
+                        }
                       },
                       constraints: BoxConstraints(
                         minWidth: 40.w,
@@ -340,18 +346,21 @@ class _RecipeViewState extends State<RecipeView> {
     });
   }
 
-  Future<void> _navigateToCreateRecipeScreen(
+  Future<bool> _navigateToCreateRecipeScreen(
     List<Group> groups,
     Recipe? recipe,
   ) async {
-    await context.push(
-      "/base/create-recipe",
-      extra: CreateRecipeExtra(
-        groups: groups,
-        selectedGroup: _selectedGroup,
-        recipeToEdit: recipe,
-      ),
-    );
+    final bool? result =
+        await context.push(
+              "/base/create-recipe",
+              extra: CreateRecipeExtra(
+                groups: groups,
+                selectedGroup: _selectedGroup,
+                recipeToEdit: recipe,
+              ),
+            )
+            as bool?;
+    return result ?? false;
   }
 
   Future<void> _loadData() async {
@@ -392,6 +401,19 @@ class _RecipeViewState extends State<RecipeView> {
       _recipes = _selectedGroup?.recipes ?? [];
     } on Exception {
       _selectedGroup = null;
+    }
+  }
+
+  Future<void> _refreshRecipesForSelectedGroup() async {
+    if (_selectedGroup != null) {
+      final recipes = await SupabaseHelper.recipe.getRecipesByGroupId(
+        _selectedGroup!.id,
+      );
+      if (recipes != null) {
+        setState(() {
+          _recipes = recipes;
+        });
+      }
     }
   }
 
