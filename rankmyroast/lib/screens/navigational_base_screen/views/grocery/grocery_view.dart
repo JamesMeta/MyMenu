@@ -64,7 +64,11 @@ class _GroceryViewState extends State<GroceryView> {
                     Expanded(child: SizedBox()),
                     IconButton(
                       onPressed: () async {
-                        await _showCreateListDialog();
+                        final response = await _showCreateListDialog();
+
+                        if (response != null && response) {
+                          await _refreshData();
+                        }
                       },
                       icon: Icon(Icons.add, color: Colors.white, size: 22.sp),
                       constraints: BoxConstraints(
@@ -124,7 +128,11 @@ class _GroceryViewState extends State<GroceryView> {
                     Expanded(child: SizedBox()),
                     IconButton(
                       onPressed: () async {
-                        await _showCreateListDialog();
+                        final response = await _showCreateListDialog();
+
+                        if (response != null && response) {
+                          await _refreshData();
+                        }
                       },
                       icon: Icon(Icons.add, color: Colors.white, size: 22.sp),
                       constraints: BoxConstraints(
@@ -196,8 +204,7 @@ class _GroceryViewState extends State<GroceryView> {
                               return GroceryListGridTileWidget(
                                 groceryList: list,
                                 refreshCallback: () => _refreshData(),
-                                openedCallback:
-                                    () => _updateListOrder(list.id),
+                                openedCallback: () => _updateListOrder(list.id),
                               );
                             },
                           ),
