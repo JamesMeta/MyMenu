@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rankmyroast/classes/extra/create_event_extra.dart';
+import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/schedule.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/classes/event_data_source.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/widgets/view_event_dialog_widget.dart';
@@ -16,13 +18,15 @@ class ScheduleView extends StatefulWidget {
 
 class _ScheduleViewState extends State<ScheduleView> {
   late Future<List<Schedule>?> _scheduledEvents;
-  CalendarView _selectedView =
+  final CalendarView _selectedView =
       CalendarView.schedule; // Default to the first view (day view)
+
+  late final Future<List<Group>?> _groups;
 
   @override
   void initState() {
     super.initState();
-
+    _groups = _getGroups();
     _scheduledEvents = _getEvents();
   }
 
@@ -35,21 +39,35 @@ class _ScheduleViewState extends State<ScheduleView> {
           SizedBox(height: 16),
           Expanded(
             child: FutureBuilder(
-              future: _scheduledEvents,
+              future: Future.wait([_scheduledEvents, _groups]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else {
-                  final events = snapshot.data!;
+                  final events = snapshot.data![0] as List<Schedule>? ?? [];
+                  final groups = snapshot.data![1] as List<Group>? ?? [];
+
                   return SfCalendar(
                     view: _selectedView,
                     onTap: (calendarTapDetails) async {
                       if (calendarTapDetails.targetElement.name !=
                           "appointment") {
+                        if (groups.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'You must be in a group to create an event.',
+                              ),
+                            ),
+                          );
+                          return;
+                        }
+
                         final response = await context.push(
                           "/base/create-event",
+                          extra: CreateEventExtra(event: null, groups: groups),
                         );
 
                         if (response != null && response is bool && response) {
@@ -96,5 +114,9 @@ class _ScheduleViewState extends State<ScheduleView> {
 
   Future<List<Schedule>?> _getEvents() async {
     return await SupabaseHelper.schedule.getAllScheduledEventsForUser();
+  }
+
+  Future<List<Group>?> _getGroups() async {
+    return await SupabaseHelper.groups.getGroupsForUser();
   }
 }

@@ -44,7 +44,7 @@ class _CreateEventScreenState extends State<CreateEventScreen>
 
   @override
   void initState() {
-    if (widget.extra != null) {
+    if (widget.extra?.event != null) {
       _labelText = "Edit Event";
       _eventToEdit = widget.extra!.event;
       _dateController.text = _eventToEdit!.servedAt
@@ -60,7 +60,11 @@ class _CreateEventScreenState extends State<CreateEventScreen>
       _labelText = "Create Event";
       _eventToEdit = null;
     }
-    _groupsFuture = _getGroups();
+    _groupsFuture =
+        widget.extra?.groups != null
+            ? Future.value(widget.extra!.groups)
+            : _getGroups();
+
     super.initState();
   }
 
