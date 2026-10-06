@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> with SnackbarService {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "Rank My Roast",
+                                          "My Menu",
                                           style:
                                               LoginScreenTheme.titleTextStyle,
                                           textAlign: TextAlign.center,
