@@ -6,9 +6,9 @@
         "opensans",
         "pkce",
         "pullable",
-        "rankmyroast",
+        "mymenu",
         "screenutil",
         "Wgss"
     ],
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "automatic"
 }

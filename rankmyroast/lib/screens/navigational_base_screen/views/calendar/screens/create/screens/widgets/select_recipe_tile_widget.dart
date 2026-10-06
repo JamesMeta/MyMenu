@@ -1,15 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:rankmyroast/classes/modals/recipe.dart';
+import 'package:mymenu/classes/modals/recipe.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SelectRecipeTileWidget extends StatelessWidget {
-  const SelectRecipeTileWidget({
-    super.key,
-    required this.recipe,
-    this.onTap,
-  });
+  const SelectRecipeTileWidget({super.key, required this.recipe, this.onTap});
 
   final Recipe recipe;
   final VoidCallback? onTap;
@@ -214,4 +210,3 @@ class SelectRecipeTileWidget extends StatelessWidget {
     );
   }
 }
-

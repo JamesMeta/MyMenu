@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rankmyroast/classes/modals/group.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/groups/widgets/group_tile_widget.dart';
-import 'package:rankmyroast/services/sqlite_helper.dart';
-import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:mymenu/classes/modals/group.dart';
+import 'package:mymenu/screens/navigational_base_screen/views/groups/widgets/group_tile_widget.dart';
+import 'package:mymenu/services/sqlite_helper.dart';
+import 'package:mymenu/services/supabase_helper.dart';
 
 class GroupsView extends StatefulWidget {
   const GroupsView({super.key});

@@ -1,6 +1,6 @@
-import 'package:rankmyroast/classes/modals/group.dart';
-import 'package:rankmyroast/classes/modals/group_order.dart';
-import 'package:rankmyroast/classes/modals/list_order.dart';
+import 'package:mymenu/classes/modals/group.dart';
+import 'package:mymenu/classes/modals/group_order.dart';
+import 'package:mymenu/classes/modals/list_order.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SqliteHelper {
@@ -30,7 +30,7 @@ class SqliteHelper {
     final dbPath = await getDatabasesPath();
 
     // Join the path with your database file name
-    final path = '$dbPath/rankMyRoast.db';
+    final path = '$dbPath/mymenu.db';
 
     // Open the database and apply the schema version and creation callback
     return await openDatabase(

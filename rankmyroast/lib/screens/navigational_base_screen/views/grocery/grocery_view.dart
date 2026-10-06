@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:rankmyroast/classes/modals/grocery_list.dart';
-import 'package:rankmyroast/classes/modals/group.dart';
-import 'package:rankmyroast/classes/modals/list_order.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/grocery/widgets/create_list_dialog_widget.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/grocery/widgets/grocery_list_grid_tile_widget.dart';
-import 'package:rankmyroast/services/sqlite_helper.dart';
-import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:mymenu/classes/modals/grocery_list.dart';
+import 'package:mymenu/classes/modals/group.dart';
+import 'package:mymenu/classes/modals/list_order.dart';
+import 'package:mymenu/screens/navigational_base_screen/views/grocery/widgets/create_list_dialog_widget.dart';
+import 'package:mymenu/screens/navigational_base_screen/views/grocery/widgets/grocery_list_grid_tile_widget.dart';
+import 'package:mymenu/services/sqlite_helper.dart';
+import 'package:mymenu/services/supabase_helper.dart';
 
 const String routeName = '/grocery';
 

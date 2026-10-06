@@ -1,6 +1,6 @@
-import 'package:rankmyroast/classes/modals/grocery.dart';
-import 'package:rankmyroast/classes/modals/grocery_list.dart';
-import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:mymenu/classes/modals/grocery.dart';
+import 'package:mymenu/classes/modals/grocery_list.dart';
+import 'package:mymenu/services/supabase_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseHelperGrocery {

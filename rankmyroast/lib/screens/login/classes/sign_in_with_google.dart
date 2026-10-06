@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
-import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:mymenu/classes/mixin/snackbar_service.dart';
+import 'package:mymenu/services/supabase_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -37,23 +37,28 @@ class SignInWithGoogle with SnackbarService {
   static Future<AuthResponse?> signInWithGoogle() async {
     final GoogleSignIn signIn = GoogleSignIn.instance;
 
+    // 1. Mandatory initialization step
     await signIn.initialize(serverClientId: serverClientId);
 
+    // 2. Authenticate user via Credential Manager sheet
     final GoogleSignInAccount googleUser;
     try {
-      googleUser = await GoogleSignIn.instance.authenticate();
+      googleUser = await signIn.authenticate();
     } catch (e) {
       return null;
     }
 
-    final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+    // 3. Retrieve the ID token from authentication
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
     final idToken = googleAuth.idToken;
 
     if (idToken == null) {
       return null;
     }
 
-    final response = SupabaseHelper.auth.authSigninWithIdToken(
+    // 4. Pass token to Supabase
+    final response = await SupabaseHelper.auth.authSigninWithIdToken(
       idToken,
       OAuthProvider.google,
     );
