@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rankmyroast/classes/extra/create_event_extra.dart';
-import 'package:rankmyroast/classes/modals/recipe.dart';
-import 'package:rankmyroast/classes/modals/schedule.dart';
-import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:mymenu/classes/extra/create_event_extra.dart';
+import 'package:mymenu/classes/modals/recipe.dart';
+import 'package:mymenu/classes/modals/schedule.dart';
+import 'package:mymenu/services/supabase_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ViewEventDialogWidget extends StatefulWidget {

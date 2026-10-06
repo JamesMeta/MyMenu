@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
-import 'package:rankmyroast/classes/modals/grocery.dart';
-import 'package:rankmyroast/classes/modals/grocery_list.dart';
-import 'package:rankmyroast/common_widgets/confirmation_dialog_widget.dart';
-import 'package:rankmyroast/common_widgets/inline_editable_title.dart';
-import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:mymenu/classes/mixin/snackbar_service.dart';
+import 'package:mymenu/classes/modals/grocery.dart';
+import 'package:mymenu/classes/modals/grocery_list.dart';
+import 'package:mymenu/common_widgets/confirmation_dialog_widget.dart';
+import 'package:mymenu/common_widgets/inline_editable_title.dart';
+import 'package:mymenu/services/supabase_helper.dart';
 
 class ViewGroceryListScreen extends StatefulWidget {
   final GroceryList? extra;

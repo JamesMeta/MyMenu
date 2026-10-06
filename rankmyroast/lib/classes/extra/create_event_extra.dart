@@ -1,5 +1,5 @@
-import 'package:rankmyroast/classes/modals/group.dart';
-import 'package:rankmyroast/classes/modals/schedule.dart';
+import 'package:mymenu/classes/modals/group.dart';
+import 'package:mymenu/classes/modals/schedule.dart';
 
 class CreateEventExtra {
   final Schedule? event;

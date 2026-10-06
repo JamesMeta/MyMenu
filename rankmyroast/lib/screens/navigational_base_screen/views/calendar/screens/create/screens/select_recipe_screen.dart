@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:rankmyroast/classes/extra/select_recipe_extra.dart';
-import 'package:rankmyroast/classes/modals/recipe.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/screens/create/screens/widgets/select_recipe_tile_widget.dart';
+import 'package:mymenu/classes/extra/select_recipe_extra.dart';
+import 'package:mymenu/classes/modals/recipe.dart';
+import 'package:mymenu/screens/navigational_base_screen/views/calendar/screens/create/screens/widgets/select_recipe_tile_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SelectRecipeScreen extends StatefulWidget {

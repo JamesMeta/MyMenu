@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
-import 'package:rankmyroast/classes/modals/group.dart';
-import 'package:rankmyroast/classes/modals/group_member.dart';
-import 'package:rankmyroast/common_widgets/confirmation_dialog_widget.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/groups/screens/widgets/group_member_list_tile.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/groups/screens/widgets/group_security_informational_dialog.dart';
-import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:mymenu/classes/mixin/snackbar_service.dart';
+import 'package:mymenu/classes/modals/group.dart';
+import 'package:mymenu/classes/modals/group_member.dart';
+import 'package:mymenu/common_widgets/confirmation_dialog_widget.dart';
+import 'package:mymenu/screens/navigational_base_screen/views/groups/screens/widgets/group_member_list_tile.dart';
+import 'package:mymenu/screens/navigational_base_screen/views/groups/screens/widgets/group_security_informational_dialog.dart';
+import 'package:mymenu/services/supabase_helper.dart';
 
 class CreateGroupScreen extends StatefulWidget {
   final Group? groupToEdit;

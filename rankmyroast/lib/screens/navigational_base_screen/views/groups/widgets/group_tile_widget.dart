@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rankmyroast/classes/extra/rank_recipe_extra.dart';
-import 'package:rankmyroast/classes/modals/group.dart';
+import 'package:mymenu/classes/extra/rank_recipe_extra.dart';
+import 'package:mymenu/classes/modals/group.dart';
 
 class GroupTileWidget extends StatelessWidget {
   final Group group;

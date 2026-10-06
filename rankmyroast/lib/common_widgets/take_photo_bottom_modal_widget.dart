@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:mymenu/services/supabase_helper.dart';
 
 class TakePhotoBottomModalWidget extends StatelessWidget {
   final bool includeRemoveImage;

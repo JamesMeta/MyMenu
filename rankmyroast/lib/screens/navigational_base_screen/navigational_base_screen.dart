@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rankmyroast/common_widgets/confirmation_dialog_widget.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/schedule_view.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/grocery/grocery_view.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/groups/groups_view.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/home/home_view.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/recipe_view.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/widgets/create_username_dialog_widget.dart';
-import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:mymenu/common_widgets/confirmation_dialog_widget.dart';
+import 'package:mymenu/screens/navigational_base_screen/views/calendar/schedule_view.dart';
+import 'package:mymenu/screens/navigational_base_screen/views/grocery/grocery_view.dart';
+import 'package:mymenu/screens/navigational_base_screen/views/groups/groups_view.dart';
+import 'package:mymenu/screens/navigational_base_screen/views/home/home_view.dart';
+import 'package:mymenu/screens/navigational_base_screen/views/recipe/recipe_view.dart';
+import 'package:mymenu/screens/navigational_base_screen/widgets/create_username_dialog_widget.dart';
+import 'package:mymenu/services/supabase_helper.dart';
 
 // ignore: constant_identifier_names
 const SELECTED_ICON_SIZE = 36.0;

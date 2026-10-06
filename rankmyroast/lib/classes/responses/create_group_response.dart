@@ -1,5 +1,5 @@
-import 'package:rankmyroast/classes/responses/async_response.dart';
-import 'package:rankmyroast/classes/modals/group_member.dart';
+import 'package:mymenu/classes/responses/async_response.dart';
+import 'package:mymenu/classes/modals/group_member.dart';
 
 class CreateGroupResponse extends AsyncResponse {
   final List<GroupMember>? failedToAddMembers;

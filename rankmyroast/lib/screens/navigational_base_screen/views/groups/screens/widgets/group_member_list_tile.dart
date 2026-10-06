@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:rankmyroast/classes/modals/group_member.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/groups/screens/widgets/classes/security_level_to_role.dart';
-import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:mymenu/classes/modals/group_member.dart';
+import 'package:mymenu/screens/navigational_base_screen/views/groups/screens/widgets/classes/security_level_to_role.dart';
+import 'package:mymenu/services/supabase_helper.dart';
 
 class GroupMemberListTile extends StatefulWidget {
   final GroupMember groupMember;

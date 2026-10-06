@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
-import 'package:rankmyroast/screens/login/classes/clipped_container.dart';
-import 'package:rankmyroast/screens/login/classes/login_screen_theme.dart';
-import 'package:rankmyroast/screens/login/classes/sign_in_with_google.dart';
-import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:mymenu/classes/mixin/snackbar_service.dart';
+import 'package:mymenu/screens/login/classes/clipped_container.dart';
+import 'package:mymenu/screens/login/classes/login_screen_theme.dart';
+import 'package:mymenu/screens/login/classes/sign_in_with_google.dart';
+import 'package:mymenu/services/supabase_helper.dart';
 
 const serverClientId =
     "474584121880-5f7qh4hd4eonbpirt35mnddrlmahma9n.apps.googleusercontent.com";
@@ -79,7 +79,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen>
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "My Menu",
+                                          "MyMenu",
                                           style:
                                               LoginScreenTheme.titleTextStyle,
                                           textAlign: TextAlign.center,

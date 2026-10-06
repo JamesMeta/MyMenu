@@ -1,4 +1,4 @@
-package com.example.rankmyroast
+package com.jamesmata.mymenu
 
 import io.flutter.embedding.android.FlutterActivity
 

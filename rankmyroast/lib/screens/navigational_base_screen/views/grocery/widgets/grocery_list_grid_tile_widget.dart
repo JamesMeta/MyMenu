@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rankmyroast/classes/modals/grocery_list.dart';
+import 'package:mymenu/classes/modals/grocery_list.dart';
 
 class GroceryListGridTileWidget extends StatefulWidget {
   final GroceryList groceryList;
