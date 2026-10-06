@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rankmyroast/classes/extra/create_recipe_extra.dart';
-import 'package:rankmyroast/classes/extra/view_recipe_extra.dart';
-import 'package:rankmyroast/classes/modals/group.dart';
-import 'package:rankmyroast/classes/modals/recipe.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/widgets/recipe_tile_widget.dart';
-import 'package:rankmyroast/services/sqlite_helper.dart';
-import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:mymenu/classes/extra/create_recipe_extra.dart';
+import 'package:mymenu/classes/extra/view_recipe_extra.dart';
+import 'package:mymenu/classes/modals/group.dart';
+import 'package:mymenu/classes/modals/recipe.dart';
+import 'package:mymenu/screens/navigational_base_screen/views/recipe/widgets/recipe_tile_widget.dart';
+import 'package:mymenu/services/sqlite_helper.dart';
+import 'package:mymenu/services/supabase_helper.dart';
 
 class RecipeView extends StatefulWidget {
   const RecipeView({super.key});

@@ -1,4 +1,4 @@
-import 'package:rankmyroast/classes/modals/grocery.dart';
+import 'package:mymenu/classes/modals/grocery.dart';
 
 class GroceryList {
   final String id;

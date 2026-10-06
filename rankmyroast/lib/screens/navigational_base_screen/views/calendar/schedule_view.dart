@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rankmyroast/classes/extra/create_event_extra.dart';
-import 'package:rankmyroast/classes/modals/group.dart';
-import 'package:rankmyroast/classes/modals/schedule.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/classes/event_data_source.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/views/calendar/widgets/view_event_dialog_widget.dart';
-import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:mymenu/classes/extra/create_event_extra.dart';
+import 'package:mymenu/classes/modals/group.dart';
+import 'package:mymenu/classes/modals/schedule.dart';
+import 'package:mymenu/screens/navigational_base_screen/views/calendar/classes/event_data_source.dart';
+import 'package:mymenu/screens/navigational_base_screen/views/calendar/widgets/view_event_dialog_widget.dart';
+import 'package:mymenu/services/supabase_helper.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class ScheduleView extends StatefulWidget {

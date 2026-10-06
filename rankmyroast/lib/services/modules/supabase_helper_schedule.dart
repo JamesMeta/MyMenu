@@ -1,5 +1,5 @@
-import 'package:rankmyroast/classes/modals/schedule.dart';
-import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:mymenu/classes/modals/schedule.dart';
+import 'package:mymenu/services/supabase_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseHelperSchedule {

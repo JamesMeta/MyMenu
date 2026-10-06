@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.rankmyroast"
+    namespace = "com.jamesmata.mymenu"
     compileSdk = 36
     ndkVersion = "27.0.12077973"
 

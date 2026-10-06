@@ -1,4 +1,4 @@
-import 'package:rankmyroast/classes/modals/recipe.dart';
+import 'package:mymenu/classes/modals/recipe.dart';
 
 class RecipeGroupUserRanking {
   final double userRank;

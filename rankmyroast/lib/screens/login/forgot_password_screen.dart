@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rankmyroast/classes/mixin/snackbar_service.dart';
-import 'package:rankmyroast/screens/login/classes/clipped_container.dart';
-import 'package:rankmyroast/screens/login/classes/login_screen_theme.dart';
+import 'package:mymenu/classes/mixin/snackbar_service.dart';
+import 'package:mymenu/screens/login/classes/clipped_container.dart';
+import 'package:mymenu/screens/login/classes/login_screen_theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 enum ForgotPasswordStep { email, otp, newPassword }

@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:rankmyroast/classes/modals/group.dart';
-import 'package:rankmyroast/classes/modals/recipe.dart';
-import 'package:rankmyroast/classes/modals/recipe_rating.dart';
-import 'package:rankmyroast/classes/responses/create_recipe_response.dart';
-import 'package:rankmyroast/services/supabase_helper.dart';
+import 'package:mymenu/classes/modals/group.dart';
+import 'package:mymenu/classes/modals/recipe.dart';
+import 'package:mymenu/classes/modals/recipe_rating.dart';
+import 'package:mymenu/classes/responses/create_recipe_response.dart';
+import 'package:mymenu/services/supabase_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
