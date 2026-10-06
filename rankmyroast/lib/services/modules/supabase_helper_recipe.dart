@@ -512,7 +512,7 @@ class SupabaseHelperRecipe {
     }
   }
 
-  // Supabase RLS Polcies prevent users from accessing recipes that aren't in their groups
+  // Supabase RLS Policies prevent users from accessing recipes that aren't in their groups
   // so doing a select all on the recipes table will not return any recipes that the user doesn't have access to,
   // we can just do a select all and return the results
   // JM1 14/JUL/2026

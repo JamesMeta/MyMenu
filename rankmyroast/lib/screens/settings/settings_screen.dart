@@ -249,11 +249,15 @@ class _SettingsScreenState extends State<SettingsScreen> with SnackbarService {
         showSuccessSnackbar(context, 'Username changed successfully!');
         return true;
       } else {
-        showSnackbar(context, 'Username is already taken.');
+        if (mounted) {
+          showSnackbar(context, 'Username is already taken.');
+        }
         return false;
       }
     } catch (e) {
-      showSnackbar(context, 'Failed to change username: $e');
+      if (mounted) {
+        showSnackbar(context, 'Failed to change username: $e');
+      }
       return false;
     } finally {
       if (mounted) {

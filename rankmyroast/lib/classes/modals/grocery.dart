@@ -1,6 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
 class Grocery {
   final int id;
   String item;

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:rankmyroast/classes/modals/schedule.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';

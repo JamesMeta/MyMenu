@@ -39,7 +39,6 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
   final List<RecipeGroupUserRanking> _poppedGroupUserRanking = [];
   List<RecipeRating>? _ratings;
   Group? _group;
-  Recipe? _recipeToRank;
   late final Future<List<Recipe>?> _recipes = SupabaseHelper.recipe
       .getRecipesByGroupId(widget.group!.id);
 
@@ -69,7 +68,6 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
   void initState() {
     _ratings = widget.ratings;
     _group = widget.group;
-    _recipeToRank = widget.recipeToRank;
     _recipeGroupUserRankingList = _fetchRecipeGroupUserRankings();
     _recipeGroupUserRatingList = _fetchRecipeGroupUserRatings();
 
@@ -720,11 +718,13 @@ class _RankRecipeScreenState extends State<RankRecipeScreen>
       updatedRankings,
     );
 
-    if (response != true) {
+    if (response != true && mounted) {
       showSnackbar(context, 'Failed to update rankings. Please try again.');
       return false;
     } else {
-      showSuccessSnackbar(context, 'Rankings updated successfully');
+      if (mounted) {
+        showSuccessSnackbar(context, 'Rankings updated successfully');
+      }
     }
 
     return true;

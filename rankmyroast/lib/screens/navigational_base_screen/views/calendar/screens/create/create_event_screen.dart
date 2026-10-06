@@ -104,17 +104,19 @@ class _CreateEventScreenState extends State<CreateEventScreen>
 
                 if (confirmDelete == true) {
                   final success = await _deleteScheduledEvent(
-                    _eventToEdit!.id!,
+                    _eventToEdit.id!,
                   ); // Assuming id is non-nullable
 
-                  if (success == true) {
+                  if (success == true && context.mounted) {
                     showSuccessSnackbar(context, 'Event deleted successfully!');
                     context.pop(true);
                   } else {
-                    showSnackbar(
-                      context,
-                      'Failed to delete event. You may have insufficient permissions.',
-                    );
+                    if (context.mounted) {
+                      showSnackbar(
+                        context,
+                        'Failed to delete event. You may have insufficient permissions.',
+                      );
+                    }
                   }
                 }
               },
@@ -216,7 +218,7 @@ class _CreateEventScreenState extends State<CreateEventScreen>
                           final groups = snapshot.data!;
                           return Container(
                             decoration: BoxDecoration(
-                              color: Colors.green.withOpacity(0.06),
+                              color: Colors.green.withAlpha(15),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(color: Colors.green, width: 1),
                             ),
@@ -477,7 +479,7 @@ class _CreateEventScreenState extends State<CreateEventScreen>
                           _isLoading = false;
                         });
 
-                        if (success) {
+                        if (success && context.mounted) {
                           context.pop(true);
                         }
                       },
@@ -555,13 +557,15 @@ class _CreateEventScreenState extends State<CreateEventScreen>
       _addIngredientsToGroceryListForEvent(groupId, _selectedRecipe!);
     }
 
-    if (success == true) {
+    if (success == true && mounted) {
       showSuccessSnackbar(context, 'Event saved successfully!');
     } else {
-      showSnackbar(
-        context,
-        'Failed to save event. You may have insufficient permissions.',
-      );
+      if (mounted) {
+        showSnackbar(
+          context,
+          'Failed to save event. You may have insufficient permissions.',
+        );
+      }
     }
     return success == true;
   }
