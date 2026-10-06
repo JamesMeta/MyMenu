@@ -22,7 +22,6 @@ import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screen
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/rank/rank_recipe_screen.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/screens/viewer/recipe_viewer.dart';
 import 'package:rankmyroast/screens/settings/settings_screen.dart';
-import 'package:rankmyroast/services/sqlite_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -41,9 +40,6 @@ void main() async {
       authFlowType: AuthFlowType.pkce,
     ),
   );
-
-  final dbHelper = SqliteHelper();
-  final db = await dbHelper.database;
 
   runApp(const MainApp());
 }

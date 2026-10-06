@@ -7,7 +7,6 @@ import 'package:rankmyroast/screens/login/classes/clipped_container.dart';
 import 'package:rankmyroast/screens/login/classes/login_screen_theme.dart';
 import 'package:rankmyroast/screens/login/classes/sign_in_with_google.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const serverClientId =
@@ -72,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> with SnackbarService {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "Rank My Roast",
+                                          "My Menu",
                                           style:
                                               LoginScreenTheme.titleTextStyle,
                                           textAlign: TextAlign.center,
@@ -315,7 +314,7 @@ class _LoginScreenState extends State<LoginScreen> with SnackbarService {
                                           text: "Privacy Policy",
                                           style: LoginScreenTheme
                                               .textButtonTextStyle
-                                              ?.copyWith(
+                                              .copyWith(
                                                 color:
                                                     Theme.of(
                                                       context,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
 
 class CreateUsernameDialogWidget extends StatefulWidget {
@@ -61,8 +62,8 @@ class _CreateUsernameDialogWidgetState
                 isLoading = false;
                 isValidUsername = usernameSet;
               });
-              if (usernameSet) {
-                Navigator.of(context).pop();
+              if (usernameSet && context.mounted) {
+                context.pop();
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),

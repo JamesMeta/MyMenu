@@ -2,8 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rankmyroast/classes/extra/create_event_extra.dart';
-import 'package:rankmyroast/classes/extra/select_recipe_extra.dart';
-import 'package:rankmyroast/classes/modals/group.dart';
 import 'package:rankmyroast/classes/modals/recipe.dart';
 import 'package:rankmyroast/classes/modals/schedule.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
@@ -39,7 +37,7 @@ class _ViewEventDialogWidgetState extends State<ViewEventDialogWidget> {
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
-        side: BorderSide(color: primaryGreen.withOpacity(0.35), width: 1.5),
+        side: BorderSide(color: primaryGreen.withAlpha(90), width: 1.5),
       ),
       titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       title: Column(
@@ -147,10 +145,15 @@ class _ViewEventDialogWidgetState extends State<ViewEventDialogWidget> {
                 extra: CreateEventExtra(event: widget.event),
               );
 
-              if (response != null && response is bool && response) {
+              if (response != null &&
+                  response is bool &&
+                  response &&
+                  context.mounted) {
                 context.pop(true);
               } else {
-                context.pop();
+                if (context.mounted) {
+                  context.pop();
+                }
               }
             },
 
@@ -175,10 +178,15 @@ class _ViewEventDialogWidgetState extends State<ViewEventDialogWidget> {
                       extra: CreateEventExtra(event: widget.event),
                     );
 
-                    if (response != null && response is bool && response) {
+                    if (response != null &&
+                        response is bool &&
+                        response &&
+                        context.mounted) {
                       context.pop(true);
                     } else {
-                      context.pop();
+                      if (context.mounted) {
+                        context.pop();
+                      }
                     }
                   },
                   style: TextButton.styleFrom(

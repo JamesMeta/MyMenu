@@ -8,7 +8,6 @@ import 'package:rankmyroast/screens/navigational_base_screen/views/groups/groups
 import 'package:rankmyroast/screens/navigational_base_screen/views/home/home_view.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/views/recipe/recipe_view.dart';
 import 'package:rankmyroast/screens/navigational_base_screen/widgets/create_username_dialog_widget.dart';
-import 'package:rankmyroast/screens/navigational_base_screen/widgets/sign_out_dialog_widget.dart';
 import 'package:rankmyroast/services/supabase_helper.dart';
 
 // ignore: constant_identifier_names
@@ -145,10 +144,12 @@ class _NavigationalBaseScreenState extends State<NavigationalBaseScreen> {
     if (hasUsername) {
       return;
     } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => CreateUsernameDialogWidget(),
-      );
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => CreateUsernameDialogWidget(),
+        );
+      }
     }
   }
 }

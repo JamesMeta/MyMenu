@@ -21,8 +21,6 @@ class _ViewGroceryListScreenState extends State<ViewGroceryListScreen>
     with SnackbarService {
   late final GroceryList? _groceryList;
 
-  bool _isEditingTitle = false;
-
   late String _title;
 
   final List<Grocery> _recentlyCompleted = [];

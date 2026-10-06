@@ -27,14 +27,12 @@ class RecipeViewer extends StatefulWidget {
 
 class _RecipeViewerState extends State<RecipeViewer> with SnackbarService {
   late final bool _isOwner;
-  late final bool _isGroupAdmin;
   late final bool _hasUserRated;
   late final RecipeRating? _userRating;
   late final Recipe _recipe;
   late final Group? _group;
   late final List<Group>? _userGroups;
   late final String? _recipeImageUrl;
-  late final bool _gradeVisible;
 
   late final Future<List<RecipeRating>?> _ratings;
 
@@ -47,7 +45,6 @@ class _RecipeViewerState extends State<RecipeViewer> with SnackbarService {
     _recipeImageUrl = _recipe.publicImageUrl;
     _group = widget.group;
     _userGroups = widget.userGroups;
-    _gradeVisible = _group?.gradeVisible ?? false;
 
     _isOwner = _recipe.userId == Supabase.instance.client.auth.currentUser!.id;
 
@@ -238,135 +235,126 @@ class _RecipeViewerState extends State<RecipeViewer> with SnackbarService {
                                   ConnectionState.done) {
                                 final ratings = snapshot.data;
                                 if (ratings == null || ratings.isEmpty) {
-                                  if (_group != null) {
-                                    if (_group.useRating) {
-                                      return TextButton(
-                                        onPressed:
-                                            () async => _showRatingDialog(),
-                                        child: Text(
-                                          "Be the first to leave a rating",
-                                          style: TextStyle(
-                                            fontSize: 12.sp,
-                                            color: Colors.grey[600],
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                  if (_group.useRating) {
+                                    return TextButton(
+                                      onPressed:
+                                          () async => _showRatingDialog(),
+                                      child: Text(
+                                        "Be the first to leave a rating",
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                      );
-                                    } else {
-                                      return TextButton(
-                                        onPressed:
-                                            () async => _goToRanking(ratings),
-                                        child: Text(
-                                          "Be the first to leave a ranking",
-                                          style: TextStyle(
-                                            fontSize: 12.sp,
-                                            color: Colors.grey[600],
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      );
-                                    }
+                                      ),
+                                    );
                                   } else {
-                                    return Text("Error: Group not found");
+                                    return TextButton(
+                                      onPressed:
+                                          () async => _goToRanking(ratings),
+                                      child: Text(
+                                        "Be the first to leave a ranking",
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    );
                                   }
                                 } else {
-                                  if (_group != null) {
-                                    if (_group.useRating &&
-                                        ratings.isNotEmpty) {
-                                      // 1. Filter for specific recipe and non-null ratings once
-                                      final recipeRatings = ratings.where(
-                                        (r) =>
-                                            r.recipeId == _recipe.id &&
-                                            r.rating != null,
-                                      );
+                                  if (_group.useRating && ratings.isNotEmpty) {
+                                    // 1. Filter for specific recipe and non-null ratings once
+                                    final recipeRatings = ratings.where(
+                                      (r) =>
+                                          r.recipeId == _recipe.id &&
+                                          r.rating != null,
+                                    );
 
-                                      // 2. Calculate average safely
-                                      final averageRating =
-                                          recipeRatings.isEmpty
-                                              ? 0.0
-                                              : recipeRatings.fold<double>(
-                                                    0,
-                                                    (sum, r) => sum + r.rating!,
-                                                  ) /
-                                                  recipeRatings.length;
+                                    // 2. Calculate average safely
+                                    final averageRating =
+                                        recipeRatings.isEmpty
+                                            ? 0.0
+                                            : recipeRatings.fold<double>(
+                                                  0,
+                                                  (sum, r) => sum + r.rating!,
+                                                ) /
+                                                recipeRatings.length;
 
-                                      return Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          const Icon(
-                                            Icons.star,
-                                            color: Colors.amber,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            "${averageRating.toStringAsFixed(1)} / 10 (${recipeRatings.length} ratings)",
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.grey[600],
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    } else {
-                                      final averages = <String, double>{};
-                                      final counts = <String, int>{};
-
-                                      for (var r in ratings) {
-                                        if (r.ranking == null) continue;
-                                        final val = r.ranking!.toDouble();
-                                        averages.update(
-                                          r.recipeId,
-                                          (curr) => curr + val,
-                                          ifAbsent: () => val,
-                                        );
-                                        counts.update(
-                                          r.recipeId,
-                                          (curr) => curr + 1,
-                                          ifAbsent: () => 1,
-                                        );
-                                      }
-
-                                      // 2. Map to averages and sort descending (highest score = Rank #1)
-                                      final sortedIds =
-                                          averages.keys.toList()..sort((a, b) {
-                                            final avgA =
-                                                averages[a]! / counts[a]!;
-                                            final avgB =
-                                                averages[b]! / counts[b]!;
-                                            return avgA.compareTo(avgB);
-                                          });
-
-                                      // 3. Find rank (1-indexed)
-                                      final rank =
-                                          sortedIds.indexOf(_recipe.id) + 1;
-
-                                      String rankText;
-                                      Color rankColor;
-                                      if (rank == 0) {
-                                        rankText = "Unranked";
-                                        rankColor = Colors.grey[600]!;
-                                      } else if (rank == 1) {
-                                        rankText = "Top Ranked Recipe!";
-                                        rankColor = Colors.green;
-                                      } else {
-                                        rankText =
-                                            "Standing: #$rank of ${sortedIds.length} Recipes";
-                                        rankColor = Colors.grey[600]!;
-                                      }
-
-                                      return Text(
-                                        rankText,
-                                        style: TextStyle(
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.bold,
-                                          color: rankColor,
+                                    return Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        const Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
                                         ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          "${averageRating.toStringAsFixed(1)} / 10 (${recipeRatings.length} ratings)",
+                                          style: TextStyle(
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    final averages = <String, double>{};
+                                    final counts = <String, int>{};
+
+                                    for (var r in ratings) {
+                                      if (r.ranking == null) continue;
+                                      final val = r.ranking!.toDouble();
+                                      averages.update(
+                                        r.recipeId,
+                                        (curr) => curr + val,
+                                        ifAbsent: () => val,
+                                      );
+                                      counts.update(
+                                        r.recipeId,
+                                        (curr) => curr + 1,
+                                        ifAbsent: () => 1,
                                       );
                                     }
-                                  } else {
-                                    return Text("Error: Group not found");
+
+                                    // 2. Map to averages and sort descending (highest score = Rank #1)
+                                    final sortedIds =
+                                        averages.keys.toList()..sort((a, b) {
+                                          final avgA =
+                                              averages[a]! / counts[a]!;
+                                          final avgB =
+                                              averages[b]! / counts[b]!;
+                                          return avgA.compareTo(avgB);
+                                        });
+
+                                    // 3. Find rank (1-indexed)
+                                    final rank =
+                                        sortedIds.indexOf(_recipe.id) + 1;
+
+                                    String rankText;
+                                    Color rankColor;
+                                    if (rank == 0) {
+                                      rankText = "Unranked";
+                                      rankColor = Colors.grey[600]!;
+                                    } else if (rank == 1) {
+                                      rankText = "Top Ranked Recipe!";
+                                      rankColor = Colors.green;
+                                    } else {
+                                      rankText =
+                                          "Standing: #$rank of ${sortedIds.length} Recipes";
+                                      rankColor = Colors.grey[600]!;
+                                    }
+
+                                    return Text(
+                                      rankText,
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: rankColor,
+                                      ),
+                                    );
                                   }
                                 }
                               } else {
@@ -387,86 +375,82 @@ class _RecipeViewerState extends State<RecipeViewer> with SnackbarService {
                                 if (ratings == null || ratings.isEmpty) {
                                   return SizedBox();
                                 } else {
-                                  if (_group != null) {
-                                    if (_group.useRating) {
-                                      return Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.edit_document,
-                                            color: Colors.grey[600],
-                                          ),
-                                          SizedBox(width: 4),
-                                          _hasUserRated
-                                              ? TextButton(
-                                                onPressed:
-                                                    () async =>
-                                                        _showRatingDialog(),
-                                                child: Text(
-                                                  "Tap to update your rating",
-                                                  style: TextStyle(
-                                                    fontSize: 12.sp,
-                                                    color: Colors.grey[600],
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              )
-                                              : TextButton(
-                                                onPressed:
-                                                    () async =>
-                                                        _showRatingDialog(),
-                                                child: Text(
-                                                  "Tap to leave a rating",
-                                                  style: TextStyle(
-                                                    fontSize: 12.sp,
-                                                    color: Colors.grey[600],
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                  if (_group.useRating) {
+                                    return Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.edit_document,
+                                          color: Colors.grey[600],
+                                        ),
+                                        SizedBox(width: 4),
+                                        _hasUserRated
+                                            ? TextButton(
+                                              onPressed:
+                                                  () async =>
+                                                      _showRatingDialog(),
+                                              child: Text(
+                                                "Tap to update your rating",
+                                                style: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  color: Colors.grey[600],
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                        ],
-                                      );
-                                    } else {
-                                      return Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.edit_document,
-                                            color: Colors.grey[600],
-                                          ),
-                                          SizedBox(width: 4),
-                                          _hasUserRated
-                                              ? TextButton(
-                                                onPressed:
-                                                    () async =>
-                                                        _goToRanking(ratings),
-                                                child: Text(
-                                                  "Tap to update your ranking",
-                                                  style: TextStyle(
-                                                    fontSize: 12.sp,
-                                                    color: Colors.grey[600],
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              )
-                                              : TextButton(
-                                                onPressed:
-                                                    () async =>
-                                                        _goToRanking(ratings),
-                                                child: Text(
-                                                  "Tap to leave a ranking",
-                                                  style: TextStyle(
-                                                    fontSize: 12.sp,
-                                                    color: Colors.grey[600],
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                            )
+                                            : TextButton(
+                                              onPressed:
+                                                  () async =>
+                                                      _showRatingDialog(),
+                                              child: Text(
+                                                "Tap to leave a rating",
+                                                style: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  color: Colors.grey[600],
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                        ],
-                                      );
-                                    }
+                                            ),
+                                      ],
+                                    );
                                   } else {
-                                    return Text("No Group Found For Recipe");
+                                    return Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.edit_document,
+                                          color: Colors.grey[600],
+                                        ),
+                                        SizedBox(width: 4),
+                                        _hasUserRated
+                                            ? TextButton(
+                                              onPressed:
+                                                  () async =>
+                                                      _goToRanking(ratings),
+                                              child: Text(
+                                                "Tap to update your ranking",
+                                                style: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  color: Colors.grey[600],
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            )
+                                            : TextButton(
+                                              onPressed:
+                                                  () async =>
+                                                      _goToRanking(ratings),
+                                              child: Text(
+                                                "Tap to leave a ranking",
+                                                style: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  color: Colors.grey[600],
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                      ],
+                                    );
                                   }
                                 }
                               } else {
