@@ -79,7 +79,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen>
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "My Menu",
+                                          "MyMenu",
                                           style:
                                               LoginScreenTheme.titleTextStyle,
                                           textAlign: TextAlign.center,
