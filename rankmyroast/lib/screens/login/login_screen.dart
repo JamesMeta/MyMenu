@@ -281,7 +281,7 @@ class _LoginScreenState extends State<LoginScreen> with SnackbarService {
                                           context.push("/login/create-account");
                                         },
                                         child: Text(
-                                          "Don't have an account?",
+                                          "No account?",
                                           style:
                                               LoginScreenTheme
                                                   .textButtonTextStyle,
